@@ -46,7 +46,7 @@ void InitKernelData() {
    
 
    for(i=0; i<20; i++){ //loop number i from 0 to 19:
-      EnQ(i, free_q); //call EnQ() to enqueue i to free_q
+      EnQ(i, *free_q); //call EnQ() to enqueue i to free_q
       MyBzero((char *)&pcb[i], sizeof(pcb[i])); //call MyBzero() to clear pcb[i]
    }
    running_pid = 0; //set running_pid to 0;  none initially, need to chose by Scheduler()
@@ -61,7 +61,7 @@ void Scheduler() {  // to choose running PID
    	pcb[running_pid].state=READY;
    }
 
-   running_pid=DeQ(ready_q); //set running process ID = dequeue ready_q
+   running_pid=DeQ(*ready_q); //set running process ID = dequeue ready_q
    printf("Scheduler: pid from DeQ ready_q: %d\n", running_pid);
    if(running_pid==-1){ //if it's -1 (didn't get one, ready_q was empty)
       running_pid = 0; //set running process ID = 0 (fall back to IdleProc)

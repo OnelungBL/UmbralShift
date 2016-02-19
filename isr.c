@@ -35,6 +35,7 @@ void EndProcISR(int *running_pid, q_t *free_q, pcb_t *pcb) {
 }        
 
 void TimerISR(int *running_pid, q_t *ready_q, pcb_t *pcb) {
+   int x;
    if(*running_pid==-1){ //just return if running PID is -1 (not any valid PID)
         cons_printf("Uh oh!");  //There was a problem!
 	return;
@@ -53,10 +54,10 @@ void TimerISR(int *running_pid, q_t *ready_q, pcb_t *pcb) {
    }
 outportb(0x20, 0x60);
 
-int x;
-for(x=0; x<20; x++) {
-	printf("ready queue[%d]: %d", x, ready_q->q[x]);
-}
+
+  for(x=0; x<20; x++) {
+  	printf("ready queue[%d]: %d", x, ready_q->q[x]);
+  }
 //   if the runtime has reached TIME_LIMIT:
 //      reset its runtime
 //      change its state to READY

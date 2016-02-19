@@ -5,8 +5,8 @@
 
 #include "typedef.h" // q_t needs be defined in code below
 
-void StartProcISR(int new_pid, q_t *ready_q);
-void EndProcISR(int new_pid, q_t *free_q);
-void TimerISR(int new_pid, q_t *ready_q);
+void StartProcISR(int, q_t *);
+void EndProcISR(int, q_t *);
+void TimerISR(int, q_t *);
 
 #endif

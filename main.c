@@ -25,7 +25,7 @@ int main() {
    StartProcISR(pid, &ready_q); //call StartProcISR(pid) to create IdleProc
 
    while(1){//infinite loop to alternate 2 things below:
-      LoadRun(); //call LoadRun() to load/run the chosen process
+      LoadRun(pid); //call LoadRun() to load/run the chosen process
       KernelMain(); //call KernelMain() to run kernel periodically to control things
    }
    return 0;   // not reached, but compiler needs it for syntax

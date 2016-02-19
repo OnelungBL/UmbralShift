@@ -43,7 +43,7 @@ int DeQ(q_t *p) { // return -1 if q is empty
   } else {
     int val = p->q[p->head];
     p->tail--;
-    for (i=0; i<Q_LE-1; i++) {
+    for (i=0; i<Q_LEN-1; i++) {
       p->q[i]=p->q[i+1];
     }
     p->q[i]='\0';

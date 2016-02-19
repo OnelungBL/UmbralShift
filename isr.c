@@ -17,7 +17,7 @@ void StartProcISR(int new_pid, q_t *ready_q) {
   pcb[new_pid].state = READY; //set its state to READY
   
   if (new_pid != 0) {
-  	EnQ(new_pid, *ready_q);
+  	EnQ(new_pid, &ready_q);
   }
 }
 
@@ -26,7 +26,7 @@ void EndProcISR(int running_pid, q_t *free_q) {
       return; //then, just return;
    } else {
    	pcb[running_pid].state=FREE;
-   	EnQ(running_pid, *free_q);
+   	EnQ(running_pid, &free_q);
    	running_pid=-1;
    }
    //change state of running process to FREE
@@ -34,7 +34,7 @@ void EndProcISR(int running_pid, q_t *free_q) {
    //set running PID to -1 (now none)
 }        
 
-void TimerISR(int running_pid, q_t *ready_q) {
+void TimerISR(int running_pid, q_t &ready_q) {
    if(running_pid==-1){ //just return if running PID is -1 (not any valid PID)
         cons_printf("Uh oh!");  //There was a problem!
 	return;

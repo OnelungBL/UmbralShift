@@ -4,7 +4,6 @@
 #include "spede.h"      // for IO_DELAY() needed here below
 #include "extern.h"     // for currently-running pid needed below
 #include "proc.h"       // for prototypes of process functions
-#include "spede.h" // spede stuff
 
 void LoadRun() {         // this is not real
    if (running_pid == 0) {

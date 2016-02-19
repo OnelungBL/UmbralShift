@@ -22,7 +22,7 @@ int main() {
    InitKernelData(); //call InitKernelData()  to set kernel data
 
    pid = DeQ(&free_q); //call DeQ() to dequeue free_q to get pid
-   StartProcISR(pid, &ready_q); //call StartProcISR(pid) to create IdleProc
+   StartProcISR(pid, &ready_q, &pcb); //call StartProcISR(pid) to create IdleProc
 
    while(1){//infinite loop to alternate 2 things below:
       LoadRun(running_pid); //call LoadRun() to load/run the chosen process
@@ -75,7 +75,7 @@ void KernelMain() {
    int new_pid;
    char key;
 
-   TimerISR(running_pid, &ready_q); //call TimerISR() to service timer interrupt as if it just occurred
+   TimerISR(running_pid, &ready_q, &pcb); //call TimerISR() to service timer interrupt as if it just occurred
 
    if(cons_kbhit()){ //if a key has been pressed on PC {
       key = cons_getchar(); //read the key with cons_getchar()
@@ -85,11 +85,11 @@ void KernelMain() {
             if(new_pid == -1) { //if the new pid (is -1) indicates no ID left
                cons_printf("Panic: no more available process ID left!\n"); //show msg on target PC: "Panic: no more available process ID left!\n"
             } else {
-               StartProcISR(new_pid, &ready_q);  //call StartProcISR(new pid) to create new proc
+               StartProcISR(new_pid, &ready_q, &pcb);  //call StartProcISR(new pid) to create new proc
             }
             break;
          case 'e':
-            EndProcISR(running_pid, &free_q); //call EndProcISR() to handle this event
+            EndProcISR(running_pid, &free_q, &pcb); //call EndProcISR() to handle this event
             break;
          case 'b':
             breakpoint(); //call breakpoint(); to go into GDB

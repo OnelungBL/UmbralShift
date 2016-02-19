@@ -14,6 +14,7 @@ void MyBzero(char *p, int byte_size) {
 
 void EnQ(int pid, q_t *p) {
 //  int i;
+//does not wrap; can only hold 20 processes during runtime.
   if (p.len < 20) {
     p.q[p.len] = pid;
     p.len++;

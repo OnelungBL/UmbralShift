@@ -56,7 +56,7 @@ outportb(0x20, 0x60);
 
 
   for(x=0; x<20; x++) {
-  	printf("ready queue[%d]: %d", x, ready_q->q[x]);
+  	printf("ready queue[%d]: %d\n", x, ready_q->q[x]);
   }
 //   if the runtime has reached TIME_LIMIT:
 //      reset its runtime

@@ -1,7 +1,7 @@
 // main.c, 159
 // the kernel is simulated, not yet real
 //
-// Team Name: UmbralShift (Members: Darren Takemoto and Alysha Straub
+// Team Name: UmbralShift (Members: Darren Takemoto and Alysha Straub)
 
 #include "spede.h"      // spede stuff
 #include "main.h"       // main stuff

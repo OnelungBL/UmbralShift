@@ -37,17 +37,28 @@ void EnQ(int pid, q_t *p) {
 }
 
 int DeQ(q_t *p) { // return -1 if q is empty
-//not going to wrap
+  int i;
   if (p->head == p->tail) {
     return -1;
   } else {
     int val = p->q[p->head];
-    p->q[p->head] = '\0';
-    p->head++;
-    p->len = p->head - p->tail;
-    printf("DeQ is sending back: %d\n", val);
-    return val;  
+    p->tail--;
+    for (i=0; i<Q_LE-1; i++) {
+      p->q[i]=p->q[i+1];
+    }
+    p->q[i]='\0';
   }
+// //not going to wrap
+//   if (p->head == p->tail) {
+//     return -1;
+//   } else {
+//     int val = p->q[p->head];
+//     p->q[p->head] = '\0';
+//     p->head++;
+//     p->len = p->head - p->tail;
+//     printf("DeQ is sending back: %d\n", val);
+//     return val;  
+//   }
   
 
 // ?????????????????????????????????????????????????

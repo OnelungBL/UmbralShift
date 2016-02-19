@@ -75,7 +75,7 @@ void KernelMain() {
    int new_pid;
    char key;
 
-   TimerISR(running_pid, &ready_q, pcb); //call TimerISR() to service timer interrupt as if it just occurred
+   TimerISR(&running_pid, &ready_q, pcb); //call TimerISR() to service timer interrupt as if it just occurred
 
    if(cons_kbhit()){ //if a key has been pressed on PC {
       key = cons_getchar(); //read the key with cons_getchar()

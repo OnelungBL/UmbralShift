@@ -34,8 +34,8 @@ int main() {
 void InitKernelData() {
    int i;
 
-   MyBZero((char *)free_q, sizeof(free_q)); //call MyBzero() to clear queues (which is to be coded in toolfunc.h/.c)
-   MyBZero((char *)ready_q, sizeof(ready_q)); //call MyBzero() to clear queues (which is to be coded in toolfunc.h/.c)
+   MyBzero((char *)&free_q, sizeof(free_q)); //call MyBzero() to clear queues (which is to be coded in toolfunc.h/.c)
+   MyBzero((char *)&ready_q, sizeof(ready_q)); //call MyBzero() to clear queues (which is to be coded in toolfunc.h/.c)
    
    free_q.head=0;
    free_q.tail=0;

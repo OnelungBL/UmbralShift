@@ -22,14 +22,14 @@ void StartProcISR(int new_pid, q_t *ready_q, pcb_t *pcb) {
   printf("New proc! Pid: %d\n",new_pid);
 }
 
-void EndProcISR(int running_pid, q_t *free_q, pcb_t *pcb) {
-   printf("In EndProcISR: Pid: %d\n",running_pid);
-   if(running_pid == 0){ //if running PID is 0 (IdleProc should not let exit),
+void EndProcISR(int *running_pid, q_t *free_q, pcb_t *pcb) {
+   printf("In EndProcISR: Pid: %d\n",*running_pid);
+   if(*running_pid == 0){ //if running PID is 0 (IdleProc should not let exit),
       return; //then, just return;
    } else {
-   	pcb[running_pid].state=FREE;
-   	EnQ(running_pid, free_q);
-   	running_pid=-1;
+   	pcb[*running_pid].state=FREE;
+   	EnQ(*running_pid, free_q);
+   	*running_pid=-1;
    }
    //change state of running process to FREE
    //queue the running PID to free queue

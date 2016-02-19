@@ -6,6 +6,9 @@
 #include "toolfunc.h"
 #include "extern.h"
 #include "proc.h"
+#include <spede/flames.h>
+#include <spede/machine/io.h>
+#include <spede/machine/pic.h>
 
 void StartProcISR(int new_pid, q_t *ready_q) {
   //How to clear the PCB of a new pid?  -- clear the PCB of the new pid

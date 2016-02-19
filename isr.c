@@ -7,7 +7,7 @@
 #include "extern.h"
 #include "proc.h"
 
-void StartProcISR(int new_pid) {
+void StartProcISR(int new_pid, q_t ready_q) {
   //How to clear the PCB of a new pid?  -- clear the PCB of the new pid
   pcb[new_pid].runtime = 0;
   pcb[new_pid].total_runtime = 0;
@@ -18,7 +18,7 @@ void StartProcISR(int new_pid) {
   }
 }
 
-void EndProcISR() {
+void EndProcISR(int new_pid, q_t ready_q) {
    if(running_pid == 0){ //if running PID is 0 (IdleProc should not let exit),
       return; //then, just return;
    } else {
@@ -31,7 +31,7 @@ void EndProcISR() {
    //set running PID to -1 (now none)
 }        
 
-void TimerISR() {
+void TimerISR(int new_pid, q_t ready_q) {
    if(running_pid==-1){ //just return if running PID is -1 (not any valid PID)
         cons_printf("Uh oh!");  //There was a problem!
 	return;

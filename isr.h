@@ -3,8 +3,8 @@
 #ifndef _ISR_H_
 #define _ISR_H_
 
-void StartProcISR(int, q_t *);
-void EndProcISR(int, q_t *);
-void TimerISR(int, q_t *);
+void StartProcISR(int new_pid, q_t *ready_q);
+void EndProcISR(int new_pid, q_t *free_q);
+void TimerISR(int new_pid, q_t *ready_q);
 
 #endif

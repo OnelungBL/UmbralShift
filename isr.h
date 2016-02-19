@@ -7,6 +7,6 @@
 
 void StartProcISR(int, q_t *, pcb_t *);
 void EndProcISR(int, q_t *, pcb_t *);
-void TimerISR(int, q_t *, pcb_t *);
+void TimerISR(int *, q_t *, pcb_t *);
 
 #endif

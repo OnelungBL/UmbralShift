@@ -71,7 +71,7 @@ void KernelMain() {
          case 's'
             new_pid = DeQ(free_q); //dequeue free_q for a new pid
             if(new_pid == -1) //if the new pid (is -1) indicates no ID left
-               show msg on target PC: "Panic: no more available process ID left!\n"
+               cons_println("Panic: no more available process ID left!\n"); //show msg on target PC: "Panic: no more available process ID left!\n"
             else
                StartProcISR(new_pid)//call StartProcISR(new pid) to create new proc
             break;

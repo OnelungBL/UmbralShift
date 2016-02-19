@@ -34,11 +34,11 @@ int main() {
 void InitKernelData() {
    int i;
 
-   MyBZero(some p, some bytesize); //call MyBzero() to clear queues (which is to be coded in toolfunc.h/.c)
+   MyBZero(); //call MyBzero() to clear queues (which is to be coded in toolfunc.h/.c)
 
    for(int i=0; i<20; i++){ //loop number i from 0 to 19:
-      EnQ(some pid, some q_t); //call EnQ() to enqueue i to free_q
-      MyBZero(some p, some bytesize); //call MyBzero() to clear pcb[i]
+      EnQ(); //call EnQ() to enqueue i to free_q
+      MyBZero(); //call MyBzero() to clear pcb[i]
    }
    running_pid = 0; //set running_pid to 0;  none initially, need to chose by Scheduler()
 }
@@ -56,7 +56,7 @@ void Scheduler() {  // to choose running PID
       running_pid = 0; //set running process ID = 0 (fall back to IdleProc)
    }
 
-   whoever's now selected as running process, set its state to RUN
+   //whoever's now selected as running process, set its state to RUN
 }
 
 void KernelMain() {

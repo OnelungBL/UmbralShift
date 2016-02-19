@@ -49,15 +49,15 @@ void Scheduler() {  // to choose running PID
 	return;
    }
    if(running_pid==0){ //if running process ID is 0 (IdleProc), change its state to READY (from RUN)
-   	
+   	pcb[running_pid].state=READY;
    }
 
-   //set running process ID = dequeue ready_q
+   running_pid=DeQ(ready_q); //set running process ID = dequeue ready_q
    if(running_pid==-1){ //if it's -1 (didn't get one, ready_q was empty)
       running_pid = 0; //set running process ID = 0 (fall back to IdleProc)
    }
-
    //whoever's now selected as running process, set its state to RUN
+   pcb[running_pid].state=RUN;
 }
 
 void KernelMain() {

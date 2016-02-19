@@ -47,6 +47,7 @@ int DeQ(q_t *p) { // return -1 if q is empty
       p->q[i]=p->q[i+1];
     }
     p->q[i]='\0';
+    p->len = p->tail - p->head;
   }
 // //not going to wrap
 //   if (p->head == p->tail) {

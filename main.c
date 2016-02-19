@@ -21,8 +21,8 @@ int main() {
 
    InitKernelData(); //call InitKernelData()  to set kernel data
 
-   DeQ(free_q); //call DeQ() to dequeue free_q to get pid
-   StartProcISR(pid); //call StartProcISR(pid) to create IdleProc
+   pid = DeQ(free_q); //call DeQ() to dequeue free_q to get pid
+   StartProcISR(pid, ready_q); //call StartProcISR(pid) to create IdleProc
 
    while(1){//infinite loop to alternate 2 things below:
       LoadRun(); //call LoadRun() to load/run the chosen process
@@ -45,7 +45,7 @@ void InitKernelData() {
    ready_q.len=0;
    
 
-   for(int i=0; i<20; i++){ //loop number i from 0 to 19:
+   for(i=0; i<20; i++){ //loop number i from 0 to 19:
       EnQ(i, free_q); //call EnQ() to enqueue i to free_q
       MyBZero((char *)&pcb[i], sizeof(pcb[i])); //call MyBzero() to clear pcb[i]
    }
@@ -72,7 +72,7 @@ void KernelMain() {
    int new_pid;
    char key;
 
-   TimerISR(); //call TimerISR() to service timer interrupt as if it just occurred
+   TimerISR(running_pid, ready_q); //call TimerISR() to service timer interrupt as if it just occurred
 
    if(cons_kbhit()){ //if a key has been pressed on PC {
       key = cons_getchar(); //read the key with cons_getchar()

@@ -37,7 +37,7 @@ void EndProcISR(int running_pid, q_t *free_q, pcb_t *pcb) {
 }        
 
 void TimerISR(int *running_pid, q_t *ready_q, pcb_t *pcb) {
-   if(running_pid==-1){ //just return if running PID is -1 (not any valid PID)
+   if(*running_pid==-1){ //just return if running PID is -1 (not any valid PID)
         cons_printf("Uh oh!");  //There was a problem!
 	return;
    }
@@ -45,14 +45,14 @@ void TimerISR(int *running_pid, q_t *ready_q, pcb_t *pcb) {
    
    outportb(0x20, 0x60);
    //in PCB, upcount both runtime and total_runtime of running process
-   pcb[running_pid].runtime++;
-   pcb[running_pid].total_runtime++;
+   pcb[*running_pid].runtime++;
+   pcb[*running_pid].total_runtime++;
 printf("runPid: %d, pcb runtime: %d, total runtime: %d\n", running_pid, pcb[running_pid].runtime, pcb[running_pid].total_runtime);
-   if (pcb[running_pid].runtime >= TIME_LIMIT) {
-   	pcb[running_pid].runtime = 0;
-   	pcb[running_pid].state=READY;
-   	EnQ(running_pid, ready_q);
-   	running_pid=-1;
+   if (pcb[*running_pid].runtime >= TIME_LIMIT) {
+   	pcb[*running_pid].runtime = 0;
+   	pcb[*running_pid].state=READY;
+   	EnQ(*running_pid, ready_q);
+   	*running_pid=-1;
    }
 outportb(0x20, 0x60);
 //   if the runtime has reached TIME_LIMIT:

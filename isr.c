@@ -19,9 +19,11 @@ void StartProcISR(int new_pid, q_t *ready_q) {
   if (new_pid != 0) {
   	EnQ(new_pid, ready_q);
   }
+  printf("New proc! Pid: %d\n",new_pid);
 }
 
 void EndProcISR(int running_pid, q_t *free_q) {
+   printf("In EndProcISR: Pid: %d\n",running_pid);
    if(running_pid == 0){ //if running PID is 0 (IdleProc should not let exit),
       return; //then, just return;
    } else {

@@ -21,7 +21,7 @@ int main() {
 
    InitKernelData(); //call InitKernelData()  to set kernel data
 
-   DeQ(); //call DeQ() to dequeue free_q to get pid
+   DeQ(free_q); //call DeQ() to dequeue free_q to get pid
    StartProcISR(pid); //call StartProcISR(pid) to create IdleProc
 
    while(1){//infinite loop to alternate 2 things below:
@@ -37,7 +37,7 @@ void InitKernelData() {
    MyBZero(); //call MyBzero() to clear queues (which is to be coded in toolfunc.h/.c)
 
    for(int i=0; i<20; i++){ //loop number i from 0 to 19:
-      EnQ(); //call EnQ() to enqueue i to free_q
+      EnQ(i, free_q); //call EnQ() to enqueue i to free_q
       MyBZero(); //call MyBzero() to clear pcb[i]
    }
    running_pid = 0; //set running_pid to 0;  none initially, need to chose by Scheduler()

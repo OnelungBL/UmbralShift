@@ -19,11 +19,9 @@ void StartProcISR(int new_pid, q_t *ready_q, pcb_t *pcb) {
   if (new_pid != 0) {
   	EnQ(new_pid, ready_q);
   }
-  printf("New proc! Pid: %d\n",new_pid);
 }
 
 void EndProcISR(int *running_pid, q_t *free_q, pcb_t *pcb) {
-   printf("In EndProcISR: Pid: %d\n",*running_pid);
    if(*running_pid == 0){ //if running PID is 0 (IdleProc should not let exit),
       return; //then, just return;
    } else {
@@ -47,7 +45,6 @@ void TimerISR(int *running_pid, q_t *ready_q, pcb_t *pcb) {
    //in PCB, upcount both runtime and total_runtime of running process
    pcb[*running_pid].runtime++;
    pcb[*running_pid].total_runtime++;
-printf("runPid: %d, pcb runtime: %d, total runtime: %d\n", *running_pid, pcb[*running_pid].runtime, pcb[*running_pid].total_runtime);
    if (pcb[*running_pid].runtime >= TIME_LIMIT) {
    	pcb[*running_pid].runtime = 0;
    	pcb[*running_pid].state=READY;
@@ -55,6 +52,11 @@ printf("runPid: %d, pcb runtime: %d, total runtime: %d\n", *running_pid, pcb[*ru
    	*running_pid=-1;
    }
 outportb(0x20, 0x60);
+
+int x;
+for(x=0; x<20; x++) {
+	printf("ready queue[%d]: %d", x, ready_q->q[x]);
+}
 //   if the runtime has reached TIME_LIMIT:
 //      reset its runtime
 //      change its state to READY

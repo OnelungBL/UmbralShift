@@ -53,6 +53,7 @@ void InitKernelData() {
 }
 
 void Scheduler() {  // to choose running PID
+   printf("Scheduler: initial pid: %d\n", running_pid);
    if(running_pid>0){//simply return if running_pid is greater than 0 (0 or less/-1 continues)
 	return;
    }

@@ -15,10 +15,10 @@ void MyBzero(char *p, int byte_size) {
 void EnQ(int pid, q_t *p) {
 //  int i;
 //does not wrap; can only hold 20 processes during runtime.
-  if (p.tail < 20) {
-    p.q[p.tail] = pid;
-    p.tail++;
-    p.len++;
+  if (p->tail < 20) {
+    p->q[p->tail] = pid;
+    p->tail++;
+    p->len++;
   } else {
     cons_printf("queue is already full");
     return;
@@ -38,13 +38,13 @@ void EnQ(int pid, q_t *p) {
 
 int DeQ(q_t *p) { // return -1 if q is empty
 //not going to wrap
-  if (p.head == p.tail) {
+  if (p->head == p->tail) {
     return -1;
   } else {
-    int val = p.q[p.head];
-    p.q[p.head] = '\0';
-    p.head++;
-    p.len--;
+    int val = p->q[p->head];
+    p->q[p->head] = '\0';
+    p->head++;
+    p->len--;
     return val;  
   }
   

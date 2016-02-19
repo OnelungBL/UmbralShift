@@ -21,7 +21,7 @@ int main() {
 
    InitKernelData(); //call InitKernelData()  to set kernel data
 
-   pid = DeQ(free_q); //call DeQ() to dequeue free_q to get pid
+   pid = DeQ(&free_q); //call DeQ() to dequeue free_q to get pid
    StartProcISR(pid, &ready_q); //call StartProcISR(pid) to create IdleProc
 
    while(1){//infinite loop to alternate 2 things below:
@@ -46,7 +46,7 @@ void InitKernelData() {
    
 
    for(i=0; i<20; i++){ //loop number i from 0 to 19:
-      EnQ(i, free_q); //call EnQ() to enqueue i to free_q
+      EnQ(i, &free_q); //call EnQ() to enqueue i to free_q
       MyBzero((char *)&pcb[i], sizeof(pcb[i])); //call MyBzero() to clear pcb[i]
    }
    running_pid = 0; //set running_pid to 0;  none initially, need to chose by Scheduler()
@@ -61,7 +61,7 @@ void Scheduler() {  // to choose running PID
    	pcb[running_pid].state=READY;
    }
 
-   running_pid=DeQ(ready_q); //set running process ID = dequeue ready_q
+   running_pid=DeQ(&ready_q); //set running process ID = dequeue ready_q
    printf("Scheduler: pid from DeQ ready_q: %d\n", running_pid);
    if(running_pid==-1){ //if it's -1 (didn't get one, ready_q was empty)
       running_pid = 0; //set running process ID = 0 (fall back to IdleProc)
@@ -81,7 +81,7 @@ void KernelMain() {
       key = cons_getchar(); //read the key with cons_getchar()
       switch(key) {
          case 's':
-            new_pid = DeQ(free_q); //dequeue free_q for a new pid
+            new_pid = DeQ(&free_q); //dequeue free_q for a new pid
             if(new_pid == -1) { //if the new pid (is -1) indicates no ID left
                cons_printf("Panic: no more available process ID left!\n"); //show msg on target PC: "Panic: no more available process ID left!\n"
             } else {

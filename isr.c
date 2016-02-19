@@ -10,7 +10,7 @@
 #include <spede/machine/io.h>
 #include <spede/machine/pic.h>
 
-void StartProcISR(int new_pid, q_t *ready_q) {
+void StartProcISR(int new_pid, q_t *ready_q, pcb_t *pcb) {
   //How to clear the PCB of a new pid?  -- clear the PCB of the new pid
   pcb[new_pid].runtime = 0;
   pcb[new_pid].total_runtime = 0;
@@ -22,7 +22,7 @@ void StartProcISR(int new_pid, q_t *ready_q) {
   printf("New proc! Pid: %d\n",new_pid);
 }
 
-void EndProcISR(int running_pid, q_t *free_q) {
+void EndProcISR(int running_pid, q_t *free_q, pcb_t *pcb) {
    printf("In EndProcISR: Pid: %d\n",running_pid);
    if(running_pid == 0){ //if running PID is 0 (IdleProc should not let exit),
       return; //then, just return;
@@ -36,7 +36,7 @@ void EndProcISR(int running_pid, q_t *free_q) {
    //set running PID to -1 (now none)
 }        
 
-void TimerISR(int running_pid, q_t *ready_q) {
+void TimerISR(int running_pid, q_t *ready_q, pcb_t *pcb) {
    if(running_pid==-1){ //just return if running PID is -1 (not any valid PID)
         cons_printf("Uh oh!");  //There was a problem!
 	return;

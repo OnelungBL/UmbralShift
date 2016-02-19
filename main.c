@@ -36,6 +36,14 @@ void InitKernelData() {
 
    MyBZero((char *)&free_q, sizeof(free_q)); //call MyBzero() to clear queues (which is to be coded in toolfunc.h/.c)
    MyBZero((char *)&ready_q, sizeof(ready_q)); //call MyBzero() to clear queues (which is to be coded in toolfunc.h/.c)
+   
+   free_q.head=0;
+   free_q.tail=0;
+   free_q.len=0;
+   ready_q.head=0;
+   ready_q.tail=0;
+   ready_q.len=0;
+   
 
    for(int i=0; i<20; i++){ //loop number i from 0 to 19:
       EnQ(i, free_q); //call EnQ() to enqueue i to free_q
@@ -69,26 +77,24 @@ void KernelMain() {
    if(cons_kbhit()){ //if a key has been pressed on PC {
       key = cons_getchar(); //read the key with cons_getchar()
       switch(key) {
-         case 's'
+         case 's':
             new_pid = DeQ(free_q); //dequeue free_q for a new pid
-            if(new_pid == -1) //if the new pid (is -1) indicates no ID left
+            if(new_pid == -1) { //if the new pid (is -1) indicates no ID left
                cons_printf("Panic: no more available process ID left!\n"); //show msg on target PC: "Panic: no more available process ID left!\n"
-            else
-               StartProcISR(new_pid)//call StartProcISR(new pid) to create new proc
+            } else {
+               StartProcISR(new_pid);  //call StartProcISR(new pid) to create new proc
+            }
             break;
-
-         case 'e'
+         case 'e':
             EndProcISR(); //call EndProcISR() to handle this event
             break;
-
-         case 'b'
+         case 'b':
             breakpoint(); //call breakpoint(); to go into GDB
             break;
-
-         case 'x'
+         case 'x':
             exit(0); //just call exit(0) to quit MyOS.dli
      }
-   }
-   Scheduler(); //call Scheduler() to choose next running process if needed
+  }
+  Scheduler(); //call Scheduler() to choose next running process if needed
 }
 

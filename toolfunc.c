@@ -38,7 +38,7 @@ void EnQ(int pid, q_t p) {
 
 int DeQ(q_t p) { // return -1 if q is empty
 //not going to wrap
-  if (q.len <= 0) {
+  if (p.len <= 0) {
     return -1;
   } else {
     int val = p.q[p.head];

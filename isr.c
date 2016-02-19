@@ -17,7 +17,7 @@ void StartProcISR(int new_pid, q_t *ready_q) {
   pcb[new_pid].state = READY; //set its state to READY
   
   if (new_pid != 0) {
-  	EnQ(new_pid, &ready_q);
+  	EnQ(new_pid, *ready_q);
   }
 }
 
@@ -26,7 +26,7 @@ void EndProcISR(int new_pid, q_t *free_q) {
       return; //then, just return;
    } else {
    	pcb[running_pid].state=FREE;
-   	EnQ(running_pid, &free_q);
+   	EnQ(running_pid, *free_q);
    	running_pid=-1;
    }
    //change state of running process to FREE
@@ -49,7 +49,7 @@ void TimerISR(int new_pid, q_t *ready_q) {
    if (pcb[running_pid].runtime >= TIME_LIMIT) {
    	pcb[running_pid].runtime = 0;
    	pcb[running_pid].state=READY;
-   	EnQ(running_pid, &ready_q);
+   	EnQ(running_pid, *ready_q);
    	running_pid=-1;
    }
 

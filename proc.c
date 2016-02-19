@@ -6,19 +6,27 @@
 #include "proc.h"       // for prototypes of process functions
 
 void LoadRun() {         // this is not real
-   if running_pid is 0:
-      call IdleProc()   // as if loads it and it runs
-   else (all other processes)
-      call UserProc()   // as if loads it and it runs
+   if (running_pid == 0) {
+      IdleProc();
+   } else {
+      UserProc();
+   }
 }
 
 void IdleProc() {
-   show msg on PC: "IdleProc (PID 0) runs.\n"
-   loop 1666667 times calling IO_DELAY()
+   int i;
+   
+   cons_printf("IdleProc (PID 0) runs.\n", IDT_ptr);
+   for(i=0; i<1666667; i++) {
+      IO_DELAY();
+   }
 }
 
 void UserProc() {
-   show msg on target PC:
-      cons_printf("UserProc (PID %d) runs.\n", running_pid);
-   loop 1666667 times calling IO_DELAY()
+   int i;
+   
+   cons_printf("UserProc (PID %d) runs.\n", running_pid);
+   for(i=0; i<1666667; i++) {
+      IO_DELAY();
+   }
 }

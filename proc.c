@@ -5,7 +5,7 @@
 #include "extern.h"     // for currently-running pid needed below
 #include "proc.h"       // for prototypes of process functions
 
-void LoadRun() {         // this is not real
+void LoadRun(int running_pid) {         // this is not real
    if (running_pid == 0) {
       IdleProc();
    } else {

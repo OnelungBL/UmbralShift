@@ -45,6 +45,7 @@ int DeQ(q_t *p) { // return -1 if q is empty
     p->q[p->head] = '\0';
     p->head++;
     p->len = p->head - p->tail;
+    printf("DeQ is sending back: %d\n", val);
     return val;  
   }
   

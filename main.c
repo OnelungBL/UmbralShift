@@ -34,11 +34,11 @@ int main() {
 void InitKernelData() {
    int i;
 
-   MyBZero(); //call MyBzero() to clear queues (which is to be coded in toolfunc.h/.c)
+   MyBZero(some char p, some int bytesize); //call MyBzero() to clear queues (which is to be coded in toolfunc.h/.c)
 
    for(int i=0; i<20; i++){ //loop number i from 0 to 19:
       EnQ(i, free_q); //call EnQ() to enqueue i to free_q
-      MyBZero(); //call MyBzero() to clear pcb[i]
+      MyBZero(some char p, some int bytesize); //call MyBzero() to clear pcb[i]
    }
    running_pid = 0; //set running_pid to 0;  none initially, need to chose by Scheduler()
 }

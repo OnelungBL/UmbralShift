@@ -89,7 +89,7 @@ void KernelMain() {
             }
             break;
          case 'e':
-            EndProcISR(running_pid, &free_q, pcb); //call EndProcISR() to handle this event
+            EndProcISR(&running_pid, &free_q, pcb); //call EndProcISR() to handle this event
             break;
          case 'b':
             breakpoint(); //call breakpoint(); to go into GDB

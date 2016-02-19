@@ -1,9 +1,9 @@
 // isr.c, 159
 
 #include "spede.h"
-#include "type.h"
+#include "typedef.h"
 #include "isr.h"
-#include "tool.h"
+#include "toolfunc.h"
 #include "extern.h"
 #include "proc.h"
 

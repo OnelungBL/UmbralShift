@@ -9,7 +9,7 @@ void LoadRun(int running_pid) {         // this is not real
    if (running_pid == 0) {
       IdleProc();
    } else {
-      UserProc();
+      UserProc(running_pid);
    }
 }
 
@@ -22,7 +22,7 @@ void IdleProc() {
    }
 }
 
-void UserProc() {
+void UserProc(int running_pid) {
    int i;
    
    cons_printf("UserProc (PID %d) runs.\n", running_pid);

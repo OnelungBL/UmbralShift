@@ -38,10 +38,11 @@ void EnQ(int pid, q_t *p) {
 
 int DeQ(q_t *p) { // return -1 if q is empty
   int i;
+  int val;
   if (p->head == p->tail) {
     return -1;
   } else {
-    int val = p->q[p->head];
+    val = p->q[p->head];
     p->tail--;
     for (i=0; i<Q_LEN-1; i++) {
       p->q[i]=p->q[i+1];

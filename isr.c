@@ -47,14 +47,14 @@ void TimerISR(int running_pid, q_t *ready_q, pcb_t *pcb) {
    //in PCB, upcount both runtime and total_runtime of running process
    pcb[running_pid].runtime++;
    pcb[running_pid].total_runtime++;
-
+printf("runPid: %d, pcb runtime: %d, total runtime: %d\n", running_pid, pcb[running_pid].runtime, pcb[running_pid].total_runtime);
    if (pcb[running_pid].runtime >= TIME_LIMIT) {
    	pcb[running_pid].runtime = 0;
    	pcb[running_pid].state=READY;
    	EnQ(running_pid, ready_q);
    	running_pid=-1;
    }
-
+outportb(0x20, 0x60);
 //   if the runtime has reached TIME_LIMIT:
 //      reset its runtime
 //      change its state to READY

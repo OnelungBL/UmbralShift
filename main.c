@@ -25,7 +25,7 @@ int main() {
    StartProcISR(pid, &ready_q); //call StartProcISR(pid) to create IdleProc
 
    while(1){//infinite loop to alternate 2 things below:
-      LoadRun(pid); //call LoadRun() to load/run the chosen process
+      LoadRun(running_pid); //call LoadRun() to load/run the chosen process
       KernelMain(); //call KernelMain() to run kernel periodically to control things
    }
    return 0;   // not reached, but compiler needs it for syntax
@@ -61,8 +61,10 @@ void Scheduler() {  // to choose running PID
    }
 
    running_pid=DeQ(ready_q); //set running process ID = dequeue ready_q
+   printf("Scheduler: pid from DeQ ready_q: %d\n", running_pid);
    if(running_pid==-1){ //if it's -1 (didn't get one, ready_q was empty)
       running_pid = 0; //set running process ID = 0 (fall back to IdleProc)
+      printf("Scheduler: pid now = %d\n", running_pid);
    }
    //whoever's now selected as running process, set its state to RUN
    pcb[running_pid].state=RUN;

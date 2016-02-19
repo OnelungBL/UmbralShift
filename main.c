@@ -37,12 +37,12 @@ void InitKernelData() {
    MyBzero((char *)&free_q, sizeof(free_q)); //call MyBzero() to clear queues (which is to be coded in toolfunc.h/.c)
    MyBzero((char *)&ready_q, sizeof(ready_q)); //call MyBzero() to clear queues (which is to be coded in toolfunc.h/.c)
    
-   free_q.head=0;
-   free_q.tail=0;
-   free_q.len=0;
-   ready_q.head=0;
-   ready_q.tail=0;
-   ready_q.len=0;
+//   free_q.head=0;
+//   free_q.tail=0;
+//   free_q.len=0;
+//   ready_q.head=0;
+//   ready_q.tail=0;
+//   ready_q.len=0;
    
 
    for(i=0; i<20; i++){ //loop number i from 0 to 19:

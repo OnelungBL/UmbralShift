@@ -36,7 +36,7 @@ void EndProcISR(int running_pid, q_t *free_q, pcb_t *pcb) {
    //set running PID to -1 (now none)
 }        
 
-void TimerISR(int running_pid, q_t *ready_q, pcb_t *pcb) {
+void TimerISR(int *running_pid, q_t *ready_q, pcb_t *pcb) {
    if(running_pid==-1){ //just return if running PID is -1 (not any valid PID)
         cons_printf("Uh oh!");  //There was a problem!
 	return;

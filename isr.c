@@ -21,7 +21,7 @@ void StartProcISR(int new_pid, q_t *ready_q) {
   }
 }
 
-void EndProcISR(int new_pid, q_t *free_q) {
+void EndProcISR(int running_pid, q_t *free_q) {
    if(running_pid == 0){ //if running PID is 0 (IdleProc should not let exit),
       return; //then, just return;
    } else {

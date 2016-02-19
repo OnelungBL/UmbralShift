@@ -16,7 +16,7 @@ void LoadRun() {         // this is not real
 void IdleProc() {
    int i;
    
-   cons_printf("IdleProc (PID 0) runs.\n", IDT_ptr);
+   cons_printf("IdleProc (PID %d) runs.\n", IDT_ptr);
    for(i=0; i<1666667; i++) {
       IO_DELAY();
    }

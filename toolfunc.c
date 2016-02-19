@@ -13,6 +13,22 @@ void MyBzero(char *p, int byte_size) {
 }
 
 void EnQ(int pid, q_t *p) {
+//  int i;
+  if (p.len < 20) {
+    p.q[p.len] = pid;
+    p.len++;
+    p.tail = p.len;
+  } else {
+    cons_printf("queue is already full");
+    return;
+  }
+//  for (i = 0; i<Q_LEN; i++) {
+//    if (p.q[i] == '\0') {
+//      p.q[i] = pid;
+//      p.tail = i;
+//      p.len = i;
+//    }
+//  }
 // ?????????????????????????????????????????????????
 // show error msg and return if queue's already full
 // needs coding

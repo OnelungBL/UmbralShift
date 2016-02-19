@@ -49,7 +49,7 @@ void TimerISR(int running_pid, q_t *ready_q) {
    if (pcb[running_pid].runtime >= TIME_LIMIT) {
    	pcb[running_pid].runtime = 0;
    	pcb[running_pid].state=READY;
-   	EnQ(running_pid, *ready_q);
+   	EnQ(running_pid, ready_q);
    	running_pid=-1;
    }
 

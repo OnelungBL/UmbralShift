@@ -81,7 +81,6 @@ void Scheduler() {  // to choose running PID
    if(running_pid==-1){ //if it's -1 (didn't get one, ready_q was empty)
       running_pid = 0; //set running process ID = 0 (fall back to IdleProc)
    }
-   printf("scheduler DeQ: %d\n", running_pid);
    //whoever's now selected as running process, set its state to RUN
    pcb[running_pid].state=RUN;
 }

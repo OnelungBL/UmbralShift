@@ -23,7 +23,7 @@ int main() {
    int pid;
 
    InitKernelData(); //call InitKernelData()  to set kernel data
-   InitKernalControl();
+   InitKernelControl();
 
    pid = DeQ(&free_q); //call DeQ() to dequeue free_q to get pid
    StartProcISR(pid, &ready_q, pcb); //call StartProcISR(pid) to create IdleProc

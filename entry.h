@@ -4,7 +4,7 @@
 #define _ENTRY_H_
 
 #include <spede/machine/pic.h>
-#include "typedef.h"
+#include "TF.h"
 
 #define TIMER_INTR 32
 

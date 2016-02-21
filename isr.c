@@ -12,9 +12,9 @@
 
 void StartProcISR(int new_pid, q_t *ready_q, pcb_t *pcb) {
   //How to clear the PCB of a new pid?  -- clear the PCB of the new pid
-//  pcb[new_pid].runtime = 0;
-//  pcb[new_pid].total_runtime = 0;
-//  pcb[new_pid].state = READY; //set its state to READY
+  pcb[new_pid].runtime = 0;
+  pcb[new_pid].total_runtime = 0;
+  pcb[new_pid].state = READY; //set its state to READY
   
   if (new_pid != 0) {
     EnQ(new_pid, ready_q);

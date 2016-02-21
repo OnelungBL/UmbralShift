@@ -22,23 +22,25 @@ void StartProcISR(int new_pid, q_t *ready_q, pcb_t *pcb) {
   
   // build initial trapframe in proc stack,
 // call MyBzero() to clear the stack 1st
-   MyBzero(...
+	//proc_stack[MAX_PROC_NUM][PROC_STACK_SIZE];
+   MyBzero((char *)&proc_stack[new_pid], PROC_STACK_SIZE); //call MyBzero() to clear pcb[i]
+
 
 // set TF_ptr of PCB to close to end (top) of stack, then fill out
 // (against last byte of stack, has space for a trapframe to build)
-   pcb[pid].TF_ptr = ...
+   pcb[new_pid].TF_ptr = &proc_stack[new_pid][PROC_STACK_SIZE];
 
-   pcb[pid].TF_ptr->eflags = EF_DEFAULT_VALUE|EF_INTR; // set INTR flag
-   pcb[pid].TF_ptr->cs = get_cs();                     // standard fair
-   pcb[pid].TF_ptr->ds = get_ds();                     // standard fair
-   pcb[pid].TF_ptr->es = get_es();                     // standard fair
-   pcb[pid].TF_ptr->fs = get_fs();                     // standard fair
-   pcb[pid].TF_ptr->gs = get_gs();                     // standard fair
+   pcb[new_pid].TF_ptr->eflags = EF_DEFAULT_VALUE|EF_INTR; // set INTR flag
+   pcb[new_pid].TF_ptr->cs = get_cs();                     // standard fair
+   pcb[new_pid].TF_ptr->ds = get_ds();                     // standard fair
+   pcb[new_pid].TF_ptr->es = get_es();                     // standard fair
+   pcb[new_pid].TF_ptr->fs = get_fs();                     // standard fair
+   pcb[new_pid].TF_ptr->gs = get_gs();                     // standard fair
 
-   if(pid == 0)
-      pcb[pid].TF_ptr->eip = ...     // if pid is 0, points to IdleProc
+   if(new_pid == 0)
+      //pcb[new_pid].TF_ptr->eip ...     // if pid is 0, points to IdleProc
    else
-      pcb[pid].TF_ptr->eip = ...     // or UserProc
+      pcb[new_pid].TF_ptr->eip = EnQ(new_pid, ready_q);     // or UserProc
   
 }
 

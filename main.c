@@ -122,9 +122,8 @@ void KernelMain(TF_t *TF_ptr) {
            exit(0); //just call exit(0) to quit MyOS.dli
     }
  }
- //-----------Scheduler(); //call Scheduler() to choose next running process if needed
-//-------------   call Scheduler() to chose process to load/run if needed
-//------------   call LoadRun(pcb[running_pid].TF_ptr) to load/run selected proc
+Scheduler(); //call Scheduler() to chose process to load/run if needed
+LoadRun(pcb[running_pid].TF_ptr); //call LoadRun(pcb[running_pid].TF_ptr) to load/run selected proc
 }
 
 

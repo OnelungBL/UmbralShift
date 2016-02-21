@@ -7,5 +7,6 @@ int main();
 void InitKernelData();
 void Scheduler();
 void KernelMain();
+void InitKernelControl();
 
 #endif

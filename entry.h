@@ -4,6 +4,7 @@
 #define _ENTRY_H_
 
 #include <spede/machine/pic.h>
+#include "typedef.h"
 
 #define TIMER_INTR 32
 
@@ -16,7 +17,7 @@
 
 __BEGIN_DECLS
 
-extern void LoadRun();           // code defined in entry.S
+extern void LoadRun(TF_t *);           // code defined in entry.S
 extern void TimerEntry();        // code defined in entry.S
 
 __END_DECLS

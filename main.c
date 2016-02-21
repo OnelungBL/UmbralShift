@@ -93,10 +93,7 @@ void KernelMain(TF_t *TF_ptr) {
 
   switch(TF_ptr->intr_id) {
   	case TIMER_INTR:
-  	printf("Timer ISR Pre-: %d ", running_pid);
-  		TimerISR(&running_pid, &ready_q, pcb);
-printf("Timer ISR Post: %d\n", running_pid);  		
-// ------         dismiss timer event: send PIC with a code
+  		TimerISR(&running_pid, &ready_q, pcb); //dismiss timer event: send PIC with a code
   		break;
   	default:
   		cons_printf("Panic: unknown intr ID(%d)!\n", TF_ptr->intr_id);

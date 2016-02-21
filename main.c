@@ -83,6 +83,7 @@ void Scheduler() {  // to choose running PID
    if(running_pid==-1){ //if it's -1 (didn't get one, ready_q was empty)
       running_pid = 0; //set running process ID = 0 (fall back to IdleProc)
    }
+   printf("scheduler DeQ: %d\n", running_pid);
    //whoever's now selected as running process, set its state to RUN
    pcb[running_pid].state=RUN;
 }
@@ -94,7 +95,7 @@ void KernelMain(TF_t *TF_ptr) {
 
   switch(TF_ptr->intr_id) {
   	case TIMER_INTR:
-  	printf("Timer ISR Pre-: %d\n", running_pid);
+  	printf("Timer ISR Pre-: %d ", running_pid);
   		TimerISR(&running_pid, &ready_q, pcb);
 printf("Timer ISR Post: %d\n", running_pid);  		
 // ------         dismiss timer event: send PIC with a code

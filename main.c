@@ -10,7 +10,6 @@
 #include "proc.h"       // processes such as IdleProc()
 #include "typedef.h"    // data types
 #include "entry.h"	// TIMER_INTR/TimerEntry
-#include "entry.S"
 #include "extern.h"
 
 // kernel data stuff:

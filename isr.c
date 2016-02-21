@@ -45,34 +45,34 @@ void StartProcISR(int new_pid, q_t *ready_q, pcb_t *pcb) {
    }
 }
 
-void EndProcISR(int *running_pid, q_t *free_q, pcb_t *pcb) {
-   if(*running_pid == 0){ //if running PID is 0 (IdleProc should not let exit),
+void EndProcISR(q_t *free_q, pcb_t *pcb) {
+   if(running_pid == 0){ //if running PID is 0 (IdleProc should not let exit),
       return; //then, just return;
    } else {
-   	pcb[*running_pid].state=FREE;
-   	EnQ(*running_pid, free_q);
-   	*running_pid=-1;
+   	pcb[running_pid].state=FREE;
+   	EnQ(running_pid, free_q);
+   	running_pid=-1;
    }
 }        
 
-void TimerISR(int *running_pid, q_t *ready_q, pcb_t *pcb) {
-   if(*running_pid==-1){ //just return if running PID is -1 (not any valid PID)
+void TimerISR(q_t *ready_q, pcb_t *pcb) {
+   if(running_pid==-1){ //just return if running PID is -1 (not any valid PID)
         cons_printf("Uh oh!");  //There was a problem!
         outportb(0x20, 0x60);
 	return; //(shouldn't happen, a Panic message can be considered)
-   } else if(*running_pid==0) {
+   } else if(running_pid==0) {
    	outportb(0x20, 0x60);
      return;
    } else { //no need to swap out process zero if it's the only process running
    //in PCB, upcount both runtime and total_runtime of running process
-   pcb[*running_pid].runtime++;
-   pcb[*running_pid].total_runtime++;
-   printf("running pid: %d runtime: %d, total runtime: %d\n", *running_pid, pcb[*running_pid].runtime, pcb[*running_pid].total_runtime);
-   if (pcb[*running_pid].runtime >= TIME_LIMIT) {
-   	pcb[*running_pid].runtime = 0;
-   	pcb[*running_pid].state=READY;
-   	EnQ(*running_pid, ready_q);
-   	*running_pid=-1;
+   pcb[running_pid].runtime++;
+   pcb[running_pid].total_runtime++;
+   printf("running pid: %d runtime: %d, total runtime: %d\n", running_pid, pcb[*running_pid].runtime, pcb[running_pid].total_runtime);
+   if (pcb[running_pid].runtime >= TIME_LIMIT) {
+   	pcb[running_pid].runtime = 0;
+   	pcb[running_pid].state=READY;
+   	EnQ(running_pid, ready_q);
+   	running_pid=-1;
    	outportb(0x20, 0x60);
    }
 	outportb(0x20, 0x60);

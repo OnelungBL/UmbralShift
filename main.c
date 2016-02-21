@@ -28,7 +28,9 @@ int main() {
    pid = DeQ(&free_q); //call DeQ() to dequeue free_q to get pid
    StartProcISR(pid, &ready_q, pcb); //call StartProcISR(pid) to create IdleProc
 
+printf("Load Run starting\n");
    LoadRun(pcb[0].TF_ptr);
+printf("Load Run ending\n");
    //while(1){//infinite loop to alternate 2 things below:
    //   LoadRun(running_pid); //call LoadRun() to load/run the chosen process
    //   KernelMain(); //call KernelMain() to run kernel periodically to control things
@@ -126,34 +128,4 @@ Scheduler(); //call Scheduler() to chose process to load/run if needed
 LoadRun(pcb[running_pid].TF_ptr); //call LoadRun(pcb[running_pid].TF_ptr) to load/run selected proc
 }
 
-
-//void KernelMain() {
-//   int new_pid;
-//   char key;
-//
-//   TimerISR(&running_pid, &ready_q, pcb); //call TimerISR() to service timer interrupt as if it just occurred
-//
-//   if(cons_kbhit()){ //if a key has been pressed on PC {
-//      key = cons_getchar(); //read the key with cons_getchar()
-//      switch(key) {
-//         case 's':
-//            new_pid = DeQ(&free_q); //dequeue free_q for a new pid
-//            if(new_pid == -1) { //if the new pid (is -1) indicates no ID left
-//               cons_printf("Panic: no more available process ID left!\n"); //show msg on target PC: "Panic: no more available process ID left!\n"
-//            } else {
-//               StartProcISR(new_pid, &ready_q, pcb);  //call StartProcISR(new pid) to create new proc
-//            }
-//            break;
-//         case 'e':
-//            EndProcISR(&running_pid, &free_q, pcb); //call EndProcISR() to handle this event
-//            break;
-//         case 'b':
-//            breakpoint(); //call breakpoint(); to go into GDB
-//            break;
-//         case 'x':
-//            exit(0); //just call exit(0) to quit MyOS.dli
-//     }
-//  }
-//  Scheduler(); //call Scheduler() to choose next running process if needed
-//}
 

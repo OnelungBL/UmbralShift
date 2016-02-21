@@ -28,9 +28,7 @@ int main() {
    pid = DeQ(&free_q); //call DeQ() to dequeue free_q to get pid
    StartProcISR(pid, &ready_q, pcb); //call StartProcISR(pid) to create IdleProc
 
-printf("Load Run starting\n");
    LoadRun(pcb[0].TF_ptr);
-printf("Load Run ending\n");
    //while(1){//infinite loop to alternate 2 things below:
    //   LoadRun(running_pid); //call LoadRun() to load/run the chosen process
    //   KernelMain(); //call KernelMain() to run kernel periodically to control things

@@ -61,7 +61,7 @@ void TimerISR(int *running_pid, q_t *ready_q, pcb_t *pcb) {
         cons_printf("Uh oh!");  //There was a problem!
 	return;
    }
-   printf("Timer ISR recieved: %d\n", running_pid);
+   printf("Timer ISR recieved: %d\n", *running_pid);
    //(shouldn't happen, a Panic message can be considered)
    
    outportb(0x20, 0x60);

@@ -43,11 +43,6 @@ void StartProcISR(int new_pid, q_t *ready_q, pcb_t *pcb) {
    } else {
       pcb[new_pid].TF_ptr->eip = (unsigned) UserProc;
    }
-  //if(pid == 0)
-  //    pcb[pid].TF_ptr->eip = ...     // if pid is 0, points to IdleProc
-  // else
-  //    pcb[pid].TF_ptr->eip = ...     // or UserProc
-      
 }
 
 void EndProcISR(int *running_pid, q_t *free_q, pcb_t *pcb) {

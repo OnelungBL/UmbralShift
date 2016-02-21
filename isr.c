@@ -12,12 +12,12 @@
 
 void StartProcISR(int new_pid, q_t *ready_q, pcb_t *pcb) {
   //How to clear the PCB of a new pid?  -- clear the PCB of the new pid
-  pcb[new_pid].runtime = 0;
-  pcb[new_pid].total_runtime = 0;
-  pcb[new_pid].state = READY; //set its state to READY
+//  pcb[new_pid].runtime = 0;
+//  pcb[new_pid].total_runtime = 0;
+//  pcb[new_pid].state = READY; //set its state to READY
   
   if (new_pid != 0) {
-  	EnQ(new_pid, ready_q);
+    EnQ(new_pid, ready_q);
   }
   
   // build initial trapframe in proc stack,
@@ -27,8 +27,9 @@ void StartProcISR(int new_pid, q_t *ready_q, pcb_t *pcb) {
 
 
 // set TF_ptr of PCB to close to end (top) of stack, then fill out
-// (against last byte of stack, has space for a trapframe to build)
+
    pcb[new_pid].TF_ptr = (TF_t *)&proc_stack[new_pid][PROC_STACK_SIZE];
+   pcb[new_pid].TF_ptr--; // (against last byte of stack, has space for a trapframe to build)
 
    pcb[new_pid].TF_ptr->eflags = EF_DEFAULT_VALUE|EF_INTR; // set INTR flag
    pcb[new_pid].TF_ptr->cs = get_cs();                     // standard fair

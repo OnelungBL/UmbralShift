@@ -60,13 +60,13 @@ void TimerISR(int *running_pid, q_t *ready_q, pcb_t *pcb) {
         cons_printf("Uh oh!");  //There was a problem!
 	return;
    }
-   printf("Timer ISR recieved: %d\n", *running_pid);
    //(shouldn't happen, a Panic message can be considered)
    
    outportb(0x20, 0x60);
    //in PCB, upcount both runtime and total_runtime of running process
    pcb[*running_pid].runtime++;
    pcb[*running_pid].total_runtime++;
+   printf("runtime: %d, total runtime: %d\n", pcb[*running_pid].runtime, pcb[*running_pid].total_runtime);
    if (pcb[*running_pid].runtime >= TIME_LIMIT) {
    	pcb[*running_pid].runtime = 0;
    	pcb[*running_pid].state=READY;

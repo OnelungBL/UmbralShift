@@ -85,12 +85,13 @@ void Scheduler() {  // to choose running PID
 }
 
 void KernelMain(TF_t *TF_ptr) {
+  char key;
    pcb[running_pid].TF_ptr = TF_ptr;  //save TF_ptr to PCB of running process
 
   switch(TF_ptr->intr_id) {
   	case TIMER_INTR:
-  		TimerISR(running_pid, &ready_q, pcb);
- ------         dismiss timer event: send PIC with a code
+  		TimerISR(&running_pid, &ready_q, pcb);
+// ------         dismiss timer event: send PIC with a code
   		break;
   	default:
   		cons_printf("Panic: unknown intr ID(%d)!\n", TF_ptr->intr_id);
@@ -106,7 +107,7 @@ void KernelMain(TF_t *TF_ptr) {
            if(new_pid == -1) { //if the new pid (is -1) indicates no ID left
               cons_printf("Panic: no more available process ID left!\n"); //show msg on target PC: "Panic: no more available process ID left!\n"
            } else {
-              StartProcISR(new_pid, &ready_q, pcb);  //call StartProcISR(new pid) to create new proc
+              StartProcISR(&running_pid, &ready_q, pcb);  //call StartProcISR(new pid) to create new proc
            }
            break;
         case 'e':

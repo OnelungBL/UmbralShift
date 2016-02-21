@@ -84,7 +84,7 @@ void KernelMain(TF_t *TF_ptr) {
 
   switch(TF_ptr->intr_id) {
   	case TIMER_INTR:
-  		outportb(0x20, 0x60);
+  	//	outportb(0x20, 0x60);
   		TimerISR(&ready_q, pcb); //dismiss timer event: send PIC with a code
   	//	outportb(0x21, ~1);
   		break;

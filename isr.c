@@ -40,7 +40,7 @@ void StartProcISR(int new_pid, q_t *ready_q, pcb_t *pcb) {
    if(new_pid == 0) {
       //pcb[new_pid].TF_ptr->eip ...     // if pid is 0, points to IdleProc
    } else {
-      pcb[new_pid].TF_ptr->eip = EnQ(new_pid, ready_q);     // or UserProc
+      //pcb[new_pid].TF_ptr->eip = EnQ(new_pid, ready_q);     // or UserProc
    }
 }
 

@@ -63,7 +63,7 @@ void InitKernelData() {
 
 void InitKernelControl() { // learned from timer lab, remember to modify main.h
    IDT_ptr = get_idt_base(); //locate IDT 1st
-   SetEntry(32, TimerEntry);	// prime IDT entry //call SetEntry() to plant TimerEntry jump point
+   SetEntry(TIMER_INTR, TimerEntry);	// prime IDT entry //call SetEntry() to plant TimerEntry jump point
    outportb(0x21, ~1);		// 0x21 is PIC mask, ~1 is mask //program the mask of PIC
    //(but NO "sti" which is built into the process trapframe)
 }

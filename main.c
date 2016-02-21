@@ -13,10 +13,10 @@
 #include "extern.h"
 
 // kernel data stuff:
-// int running_pid;            // currently-running PID, if -1, none running
-// q_t ready_q, free_q;        // processes ready to run and ID's un-used
-// pcb_t pcb[MAX_PROC_NUM];    // process table
-// char proc_stack[MAX_PROC_NUM][PROC_STACK_SIZE]; // runtime stacks of processes
+ int running_pid;            // currently-running PID, if -1, none running
+ q_t ready_q, free_q;        // processes ready to run and ID's un-used
+ pcb_t pcb[MAX_PROC_NUM];    // process table
+ char proc_stack[MAX_PROC_NUM][PROC_STACK_SIZE]; // runtime stacks of processes
 struct i386_gate *IDT_ptr;
 
 int main() {

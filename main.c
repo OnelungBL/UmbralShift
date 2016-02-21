@@ -86,6 +86,7 @@ void Scheduler() {  // to choose running PID
 
 void KernelMain(TF_t *TF_ptr) {
   char key;
+  int new_pid;
    pcb[running_pid].TF_ptr = TF_ptr;  //save TF_ptr to PCB of running process
 
   switch(TF_ptr->intr_id) {
@@ -107,7 +108,7 @@ void KernelMain(TF_t *TF_ptr) {
            if(new_pid == -1) { //if the new pid (is -1) indicates no ID left
               cons_printf("Panic: no more available process ID left!\n"); //show msg on target PC: "Panic: no more available process ID left!\n"
            } else {
-              StartProcISR(&running_pid, &ready_q, pcb);  //call StartProcISR(new pid) to create new proc
+              StartProcISR(new_pid, &ready_q, pcb);  //call StartProcISR(new pid) to create new proc
            }
            break;
         case 'e':

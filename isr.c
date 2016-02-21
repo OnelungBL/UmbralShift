@@ -38,10 +38,15 @@ void StartProcISR(int new_pid, q_t *ready_q, pcb_t *pcb) {
    pcb[new_pid].TF_ptr->gs = get_gs();                     // standard fair
 
    if(new_pid == 0) {
-      pcb[new_pid].TF_ptr->eip = 0 //?...     // if pid is 0, points to IdleProc
+     // pcb[new_pid].TF_ptr->eip = 0 //?...     // if pid is 0, points to IdleProc
    } else {
-      pcb[new_pid].TF_ptr->eip = EnQ(new_pid, ready_q);     // or UserProc
+     EnQ(new_pid, ready_q);     // or UserProc
    }
+  //if(pid == 0)
+  //    pcb[pid].TF_ptr->eip = ...     // if pid is 0, points to IdleProc
+  // else
+  //    pcb[pid].TF_ptr->eip = ...     // or UserProc
+      
 }
 
 void EndProcISR(int *running_pid, q_t *free_q, pcb_t *pcb) {

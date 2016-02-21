@@ -28,7 +28,7 @@ void StartProcISR(int new_pid, q_t *ready_q, pcb_t *pcb) {
 
 // set TF_ptr of PCB to close to end (top) of stack, then fill out
 // (against last byte of stack, has space for a trapframe to build)
-   pcb[new_pid].TF_ptr = (char *)proc_stack[new_pid][PROC_STACK_SIZE];
+   pcb[new_pid].TF_ptr = (TF_t *)proc_stack[new_pid][PROC_STACK_SIZE];
 
    pcb[new_pid].TF_ptr->eflags = EF_DEFAULT_VALUE|EF_INTR; // set INTR flag
    pcb[new_pid].TF_ptr->cs = get_cs();                     // standard fair

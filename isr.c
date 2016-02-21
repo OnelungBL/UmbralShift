@@ -60,9 +60,9 @@ void TimerISR(int *running_pid, q_t *ready_q, pcb_t *pcb) {
         cons_printf("Uh oh!");  //There was a problem!
 	return;
    }//(shouldn't happen, a Panic message can be considered)
-   if(*running_pid==0) {
-     return;
-   } //no need to swap out process zero if it's the only process running
+   //if(*running_pid==0) {
+   //  return;
+   //} //no need to swap out process zero if it's the only process running
    
    
    outportb(0x20, 0x60);

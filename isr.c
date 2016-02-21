@@ -28,7 +28,7 @@ void StartProcISR(int new_pid, q_t *ready_q, pcb_t *pcb) {
 
 // set TF_ptr of PCB to close to end (top) of stack, then fill out
 // (against last byte of stack, has space for a trapframe to build)
-   pcb[new_pid].TF_ptr = &proc_stack[new_pid][PROC_STACK_SIZE];
+   pcb[new_pid].TF_ptr = proc_stack[new_pid][PROC_STACK_SIZE];
 
    pcb[new_pid].TF_ptr->eflags = EF_DEFAULT_VALUE|EF_INTR; // set INTR flag
    pcb[new_pid].TF_ptr->cs = get_cs();                     // standard fair
@@ -37,11 +37,11 @@ void StartProcISR(int new_pid, q_t *ready_q, pcb_t *pcb) {
    pcb[new_pid].TF_ptr->fs = get_fs();                     // standard fair
    pcb[new_pid].TF_ptr->gs = get_gs();                     // standard fair
 
-   if(new_pid == 0)
+   if(new_pid == 0) {
       //pcb[new_pid].TF_ptr->eip ...     // if pid is 0, points to IdleProc
-   else
+   } else {
       pcb[new_pid].TF_ptr->eip = EnQ(new_pid, ready_q);     // or UserProc
-  
+   }
 }
 
 void EndProcISR(int *running_pid, q_t *free_q, pcb_t *pcb) {

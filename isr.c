@@ -56,7 +56,6 @@ void EndProcISR(int *running_pid, q_t *free_q, pcb_t *pcb) {
 }        
 
 void TimerISR(int *running_pid, q_t *ready_q, pcb_t *pcb) {
-	outportb(0x20, 0x60);
    if(*running_pid==-1){ //just return if running PID is -1 (not any valid PID)
         cons_printf("Uh oh!");  //There was a problem!
 	return;
@@ -66,7 +65,6 @@ void TimerISR(int *running_pid, q_t *ready_q, pcb_t *pcb) {
    //} //no need to swap out process zero if it's the only process running
    
    
-   outportb(0x20, 0x60);
    //in PCB, upcount both runtime and total_runtime of running process
    pcb[*running_pid].runtime++;
    pcb[*running_pid].total_runtime++;
@@ -78,7 +76,6 @@ void TimerISR(int *running_pid, q_t *ready_q, pcb_t *pcb) {
    	*running_pid=-1;
    	outportb(0x20, 0x60);
    }
-outportb(0x20, 0x60);
 outportb(0x20, 0x60);
 
 //int x;

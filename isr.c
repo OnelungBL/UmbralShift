@@ -20,9 +20,9 @@ void StartProcISR(int new_pid, q_t *ready_q, pcb_t *pcb) {
     EnQ(new_pid, ready_q);
   }
   
-  // build initial trapframe in proc stack,
+// build initial trapframe in proc stack,
 // call MyBzero() to clear the stack 1st
-	//proc_stack[MAX_PROC_NUM][PROC_STACK_SIZE];
+
    MyBzero((char *)&proc_stack[new_pid], PROC_STACK_SIZE); //call MyBzero() to clear pcb[i]
 
 
@@ -39,9 +39,9 @@ void StartProcISR(int new_pid, q_t *ready_q, pcb_t *pcb) {
    pcb[new_pid].TF_ptr->gs = get_gs();                     // standard fair
 
    if(new_pid == 0) {
-     // pcb[new_pid].TF_ptr->eip = 0 //?...     // if pid is 0, points to IdleProc
+      pcb[new_pid].TF_ptr->eip = (unsigned) IdleProc; //?...     // if pid is 0, points to IdleProc
    } else {
-     EnQ(new_pid, ready_q);     // or UserProc
+      pcb[new_pid].TF_ptr->eip = (unsigned) UserProc;
    }
   //if(pid == 0)
   //    pcb[pid].TF_ptr->eip = ...     // if pid is 0, points to IdleProc
@@ -58,9 +58,6 @@ void EndProcISR(int *running_pid, q_t *free_q, pcb_t *pcb) {
    	EnQ(*running_pid, free_q);
    	*running_pid=-1;
    }
-   //change state of running process to FREE
-   //queue the running PID to free queue
-   //set running PID to -1 (now none)
 }        
 
 void TimerISR(int *running_pid, q_t *ready_q, pcb_t *pcb) {
@@ -87,11 +84,4 @@ outportb(0x20, 0x60);
   for(x=0; x<20; x++) {
   	printf("ready queue[%d]: %d\n", x, ready_q->q[x]);
   }
-//   if the runtime has reached TIME_LIMIT:
-//      reset its runtime
-//      change its state to READY
-//      queue it to ready queue
-//      set running PID to -1
-//      (Scheduler() will get next PID from ready queue if any;
-//      if none, Scheduler will pick 0 as running PID)
 }

@@ -85,7 +85,7 @@ void KernelMain(TF_t *TF_ptr) {
   switch(TF_ptr->intr_id) {
   	case TIMER_INTR:
   		outportb(0x20, 0x60);
-  		TimerISR(&running_pid, &ready_q, pcb); //dismiss timer event: send PIC with a code
+  		TimerISR(&ready_q, pcb); //dismiss timer event: send PIC with a code
   		outportb(0x21, ~1);
   		break;
   	default:
@@ -106,7 +106,7 @@ void KernelMain(TF_t *TF_ptr) {
            }
            break;
         case 'e':
-           EndProcISR(&running_pid, &free_q, pcb); //call EndProcISR() to handle this event
+           EndProcISR(&free_q, pcb); //call EndProcISR() to handle this event
            break;
         case 'b':
            breakpoint(); //call breakpoint(); to go into GDB

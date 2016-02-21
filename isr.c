@@ -76,7 +76,9 @@ void TimerISR(int *running_pid, q_t *ready_q, pcb_t *pcb) {
    	pcb[*running_pid].state=READY;
    	EnQ(*running_pid, ready_q);
    	*running_pid=-1;
+   	outportb(0x20, 0x60);
    }
+outportb(0x20, 0x60);
 outportb(0x20, 0x60);
 
 //int x;

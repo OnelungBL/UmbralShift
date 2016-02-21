@@ -88,8 +88,8 @@ void KernelMain(TF_t *TF_ptr) {
    pcb[running_pid].TF_ptr = TF_ptr;  //save TF_ptr to PCB of running process
 
   switch(TF_ptr->intr_id) {
-  	case 'TIMER_INTR':
-  		TimerISR(running_pid, ready_q, pcb);
+  	case TIMER_INTR:
+  		TimerISR(running_pid, &ready_q, pcb);
  ------         dismiss timer event: send PIC with a code
   		break;
   	default:

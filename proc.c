@@ -15,7 +15,7 @@ void IdleProc() {
    }
 }
 
-void UserProc(int running_pid) {
+void UserProc() {
    int i;
    for(;;) {
       cons_printf("UserProc (PID %d) runs.\n", running_pid);

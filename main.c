@@ -9,17 +9,20 @@
 #include "toolfunc.h"   // handy functions for Kernel
 #include "proc.h"       // processes such as IdleProc()
 #include "typedef.h"    // data types
+#include "entry.h"	// TIMER_INTR/TimerEntry
 
 // kernel data stuff:
 int running_pid;            // currently-running PID, if -1, none running
 q_t ready_q, free_q;        // processes ready to run and ID's un-used
 pcb_t pcb[MAX_PROC_NUM];    // process table
 char proc_stack[MAX_PROC_NUM][PROC_STACK_SIZE]; // runtime stacks of processes
+struct i386_gate *IDT_ptr;
 
 int main() {
    int pid;
 
    InitKernelData(); //call InitKernelData()  to set kernel data
+   InitKernalControl();
 
    pid = DeQ(&free_q); //call DeQ() to dequeue free_q to get pid
    StartProcISR(pid, &ready_q, pcb); //call StartProcISR(pid) to create IdleProc
@@ -29,6 +32,11 @@ int main() {
       KernelMain(); //call KernelMain() to run kernel periodically to control things
    }
    return 0;   // not reached, but compiler needs it for syntax
+}
+
+void SetEntry(int entry_num, func_ptr_t func_ptr) {
+	struct i386_gate *gateptr = &IDT_ptr[entry_num];
+	fill_gate(gateptr, (int)func_ptr, get_cs(), ACC_INTR_GATE, 0);
 }
 
 void InitKernelData() {
@@ -52,6 +60,13 @@ void InitKernelData() {
    running_pid = 0; //set running_pid to 0;  none initially, need to chose by Scheduler()
 }
 
+void InitKernelControl() { // learned from timer lab, remember to modify main.h
+   locate IDT 1st
+   call SetEntry() to plant TimerEntry jump point
+   program the mask of PIC
+   (but NO "sti" which is built into the process trapframe)
+}
+
 void Scheduler() {  // to choose running PID
    if(running_pid>0){//simply return if running_pid is greater than 0 (0 or less/-1 continues)
 	return;
@@ -68,33 +83,54 @@ void Scheduler() {  // to choose running PID
    pcb[running_pid].state=RUN;
 }
 
-void KernelMain() {
-   int new_pid;
-   char key;
+void KernelMain(TF_t *TF_ptr) {
+   save TF_ptr to PCB of running process
 
-   TimerISR(&running_pid, &ready_q, pcb); //call TimerISR() to service timer interrupt as if it just occurred
+   switch on TF_ptr->intr_id {
+      if it's TIMER_INTR:
+         call TimerISR()
+         dismiss timer event: send PIC with a code
+         break;
 
-   if(cons_kbhit()){ //if a key has been pressed on PC {
-      key = cons_getchar(); //read the key with cons_getchar()
-      switch(key) {
-         case 's':
-            new_pid = DeQ(&free_q); //dequeue free_q for a new pid
-            if(new_pid == -1) { //if the new pid (is -1) indicates no ID left
-               cons_printf("Panic: no more available process ID left!\n"); //show msg on target PC: "Panic: no more available process ID left!\n"
-            } else {
-               StartProcISR(new_pid, &ready_q, pcb);  //call StartProcISR(new pid) to create new proc
-            }
-            break;
-         case 'e':
-            EndProcISR(&running_pid, &free_q, pcb); //call EndProcISR() to handle this event
-            break;
-         case 'b':
-            breakpoint(); //call breakpoint(); to go into GDB
-            break;
-         case 'x':
-            exit(0); //just call exit(0) to quit MyOS.dli
-     }
-  }
-  Scheduler(); //call Scheduler() to choose next running process if needed
+      default:
+         show msg: cons_printf("Panic: unknown intr ID (%d)!\n", TF_ptr->intr_id);
+         breakpoint();     // fallback to GDB
+   }
+// same as in Simulated:
+// poll key and handle keystroke simulated events (s/e/b/q, but no 't' key)
+
+   call Scheduler() to chose process to load/run if needed
+   call LoadRun(pcb[running_pid].TF_ptr) to load/run selected proc
 }
+
+
+//void KernelMain() {
+//   int new_pid;
+//   char key;
+//
+//   TimerISR(&running_pid, &ready_q, pcb); //call TimerISR() to service timer interrupt as if it just occurred
+//
+//   if(cons_kbhit()){ //if a key has been pressed on PC {
+//      key = cons_getchar(); //read the key with cons_getchar()
+//      switch(key) {
+//         case 's':
+//            new_pid = DeQ(&free_q); //dequeue free_q for a new pid
+//            if(new_pid == -1) { //if the new pid (is -1) indicates no ID left
+//               cons_printf("Panic: no more available process ID left!\n"); //show msg on target PC: "Panic: no more available process ID left!\n"
+//            } else {
+//               StartProcISR(new_pid, &ready_q, pcb);  //call StartProcISR(new pid) to create new proc
+//            }
+//            break;
+//         case 'e':
+//            EndProcISR(&running_pid, &free_q, pcb); //call EndProcISR() to handle this event
+//            break;
+//         case 'b':
+//            breakpoint(); //call breakpoint(); to go into GDB
+//            break;
+//         case 'x':
+//            exit(0); //just call exit(0) to quit MyOS.dli
+//     }
+//  }
+//  Scheduler(); //call Scheduler() to choose next running process if needed
+//}
 

@@ -5,6 +5,6 @@
 
 //void LoadRun(int);
 void IdleProc();
-void UserProc(int);
+void UserProc();
 
 #endif

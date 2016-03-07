@@ -101,8 +101,8 @@ void SemPostISR(int sem_id) {
   	sem[sem_id].limit++;
   	return;
   }
-  cons_printf("\nSemPostISR(): freeing proc %d <---", running_pid);
   released_pid = DeQ(&sem[sem_id].wait_q);
+  cons_printf("\nSemPostISR(): freeing proc %d <---", released_pid);  
   pcb[released_pid].state = READY;
   EnQ(released_pid, &ready_q);
 }

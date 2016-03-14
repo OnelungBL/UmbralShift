@@ -48,6 +48,8 @@ void InitKernelData() {
    MyBzero((char *)&sleep_q, sizeof(q_t));  //reset sleep_q: Procedure.txt line:26
    MyBzero((char *)&free_q, sizeof(q_t)); //call MyBzero() to clear queues (which is to be coded in toolfunc.h/.c)
    MyBzero((char *)&ready_q, sizeof(q_t)); //call MyBzero() to clear queues (which is to be coded in toolfunc.h/.c)
+   MyBzero((char *)&msg_q, sizeof(msg_q_t));
+
    for(i=0; i<MAX_PROC_NUM; i++){ //loop number i from 0 to 19:
       EnQ(i, &free_q); //call EnQ() to enqueue i to free_q
       MyBzero((char *)&pcb[i], sizeof(pcb_t)); //call MyBzero() to clear pcb[i]

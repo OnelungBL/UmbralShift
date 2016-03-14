@@ -27,7 +27,6 @@ ENTRY(TimerEntry)
    pushl $TIMER_INTR
    jmp CompleteTFenterKernel
 
-
 ENTRY(GetPidEntry)
   pushl $GETPID_INTR
   jmp CompleteTFenterKernel

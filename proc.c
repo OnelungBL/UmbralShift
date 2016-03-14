@@ -66,6 +66,7 @@ void ConsumerProc() {
   for(;;) { //loop forever
     my_msg.recipient = 0;
     MsgRcv(&my_msg);
+    cons_printf("\n-- Consumer (%d) consuming data %d...\n",my_pid, my_msg.data);
      for(i=0; i<3333333; i++) { //busy loop for 2 seconds: for(i=0; i<3333333; i++) IO_DELAY();
        IO_DELAY();
      }    

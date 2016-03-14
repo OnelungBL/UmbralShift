@@ -31,15 +31,15 @@ void StartProc(func_ptr_t func_ptr) {
 
 void MsgSnd(msg_t *msg_addr) {
       asm("movl %0, %%eax; int $54"
-       :                        
-       : "g" ((int)&msg_addr)         
+       :                                 
+       : "g" (msg_addr)
        : "%eax"); 
 }
 
 void MsgRcv(msg_t *msg_addr) {
       asm("movl %0, %%eax; int $55"
-       :                        
-       : "g" ((int)&msg_addr)         
+       :                                
+       : "g" (msg_addr)        
        : "%eax"); 
 }
 

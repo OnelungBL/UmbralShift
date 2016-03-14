@@ -24,7 +24,7 @@ typedef struct {             // PCB describes proc image
 } pcb_t;
 
 typedef struct {             // proc queue type
-   int head, len;      // where head and tail are, and current length
+   int head, tail, len;      // where head and tail are, and current length
    int q[Q_LEN];             // indices into q[] array to place or get element
 } q_t;
 

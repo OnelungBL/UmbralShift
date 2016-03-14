@@ -75,19 +75,20 @@ void MsgSndISR(int msg_addr) {
   msg_t *destination;
   int msg_q_id;
   int freed_pid;
-  incoming_msg_ptr = (msg_t *)msg_addr;
+  incoming_msg_ptr = (msg_t *) msg_addr;
   msg_q_id = incoming_msg_ptr->recipient;
   incoming_msg_ptr->OS_clock = OS_clock; //authentication ?
   incoming_msg_ptr->sender = running_pid; //authentication ?
-  
-  if (msg_q[msg_q_id].wait_q.len == 0) {
-    MsgEnQ(incoming_msg_ptr, &msg_q[incoming_msg_ptr->sender]);
+if (msg_q[msg_q_id].wait_q.len == 0) {
+    MsgEnQ(incoming_msg_ptr, &msg_q[msg_q_id]);
   } else {
     freed_pid = DeQ(&msg_q[msg_q_id].wait_q);
     EnQ(freed_pid, &ready_q);
     pcb[freed_pid].state = READY;
     destination = (msg_t *)pcb[freed_pid].TF_ptr->eax;
-    memcpy(destination, (msg_t *) pcb[freed_pid].TF_ptr->eax, sizeof(pcb[freed_pid].TF_ptr->eax));
+    memcpy(destination, incoming_msg_ptr, sizeof(msg_t));
+    //memcpy((msg_t *)pcb[freed_pid].TF_ptr->eax, incoming_msg_ptr, sizeof(msg_t));
+    destination = incoming_msg_ptr;
     cons_printf("\n! MsgSndISR: FREEING process # %d !\n", freed_pid);
   }
 }
@@ -96,18 +97,16 @@ void MsgRcvISR(int msg_addr) {
   msg_t *receiving_msg_ptr;
   msg_t *queued_msg_ptr;
   int msg_q_id;
-
   receiving_msg_ptr = (msg_t *)msg_addr;
   msg_q_id = receiving_msg_ptr->recipient;
-
-  if (msg_q[msg_q_id].wait_q.len > 0) { //message
+  if (msg_q[msg_q_id].len > 0) {
     queued_msg_ptr = MsgDeQ(&msg_q[msg_q_id]);
-    memcpy(receiving_msg_ptr, queued_msg_ptr, sizeof(queued_msg_ptr));
-  } else {  //no message
-    cons_printf("\n! MsgRcvISR: BLOCKING process # %d !\n", msg_q_id);
+    memcpy(receiving_msg_ptr, queued_msg_ptr, sizeof(msg_t));
+  } else {  //no message   
+    cons_printf("\n! MsgRcvISR: BLOCKING process # %d !\n", running_pid);
     EnQ(running_pid, &msg_q[msg_q_id].wait_q);
     pcb[running_pid].state=WAIT;
     running_pid = -1;
-  }
+  } 
 }
 

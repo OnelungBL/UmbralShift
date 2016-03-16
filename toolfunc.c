@@ -59,19 +59,16 @@ msg_t * MsgDeQ(msg_q_t *msg_q_ptr) {
   msg_t *ret_ptr;
   if (msg_q_ptr->len <= 0) {
     cons_printf("Panic: msg_q is empty, cannot dequeue!\n");
-    return 0;
+    return '\0';
   } else {
     ret_ptr = &msg_q_ptr->msg[msg_q_ptr->head];
     msg_q_ptr->len--;
     msg_q_ptr->head++;
-//why are we wrapping?  doesn't this lose data?
-//-- is this constantly keeping a 20-queue by cycling through the head/tail positions?
-//why is it when trying to impliment a dequeue with shift, there are segsev segmentation fault errors?
     if (msg_q_ptr->head == (Q_LEN-1)) {
       msg_q_ptr->head = 0;
     }
     return ret_ptr;
   }
-  return 0;
+  return '\0';
 
 }

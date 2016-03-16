@@ -10,6 +10,8 @@ extern q_t ready_q, free_q, sleep_q;                        // ready to run, not
 extern pcb_t pcb[MAX_PROC_NUM];                    // process table
 extern char proc_stack[MAX_PROC_NUM][PROC_STACK_SIZE]; // process runtime stacks
 extern int OS_clock;
+extern sem_t sem[Q_SIZE]; //semaphore array
+extern q_t sem_q; //semaphore ID queue
 extern msg_q_t msg_q[MAX_PROC_NUM];
 
 #endif

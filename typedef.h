@@ -29,12 +29,12 @@ typedef struct {             // proc queue type
 } q_t;
 
 typedef void (*func_ptr_t)(void); // void-return function pointer type
-/*
+
 typedef struct {
    int limit; //count to limit number of processes to access a critical code section
    q_t wait_q; //queue for blocking/waiting PIDs
 } sem_t;
-*/
+
 typedef struct {
   int sender;
   int recipient;

@@ -70,6 +70,40 @@ void SleepISR() {
   running_pid=-1;
 }
 
+void SemGetISR(int limit) {
+  int sem_id = DeQ(&sem_q);
+  if (sem_id == -1) {
+  	pcb[running_pid].TF_ptr->ebx = -1;
+  	return;
+  }
+ MyBzero((char *)&sem[sem_id], sizeof(sem_t));
+ sem[sem_id].limit = limit;
+ pcb[running_pid].TF_ptr->ebx = sem_id;
+}
+
+void SemWaitISR(int sem_id) {
+  if (sem[sem_id].limit > 0) {
+  	sem[sem_id].limit--;
+  	return;
+  }
+  cons_printf("\nSemWaitISR(): blocking proc %d <---", running_pid);
+  EnQ(running_pid, &sem[sem_id].wait_q);
+  pcb[running_pid].state = WAIT;
+  running_pid = -1;
+}
+
+void SemPostISR(int sem_id) {
+  int released_pid;
+  if (sem[sem_id].wait_q.len == 0) {
+  	sem[sem_id].limit++;
+  	return;
+  }
+  released_pid = DeQ(&sem[sem_id].wait_q);
+  cons_printf("\nSemPostISR(): freeing proc %d <---", released_pid);  
+  pcb[released_pid].state = READY;
+  EnQ(released_pid, &ready_q);
+}
+
 void MsgSndISR(int msg_addr) {
   msg_t *incoming_msg_ptr;
   msg_t *destination;
@@ -79,6 +113,7 @@ void MsgSndISR(int msg_addr) {
   msg_q_id = incoming_msg_ptr->recipient;
   incoming_msg_ptr->OS_clock = OS_clock; //authentication ?
   incoming_msg_ptr->sender = running_pid; //authentication ?
+
 if (msg_q[msg_q_id].wait_q.len == 0) {
     MsgEnQ(incoming_msg_ptr, &msg_q[msg_q_id]);
   } else {
@@ -86,9 +121,7 @@ if (msg_q[msg_q_id].wait_q.len == 0) {
     EnQ(freed_pid, &ready_q);
     pcb[freed_pid].state = READY;
     destination = (msg_t *)pcb[freed_pid].TF_ptr->eax;
-    memcpy(destination, incoming_msg_ptr, sizeof(msg_t));
-    //memcpy((msg_t *)pcb[freed_pid].TF_ptr->eax, incoming_msg_ptr, sizeof(msg_t));
-    destination = incoming_msg_ptr;
+    *destination = *incoming_msg_ptr;
     cons_printf("\n! MsgSndISR: FREEING process # %d !\n", freed_pid);
   }
 }
@@ -101,7 +134,7 @@ void MsgRcvISR(int msg_addr) {
   msg_q_id = receiving_msg_ptr->recipient;
   if (msg_q[msg_q_id].len > 0) {
     queued_msg_ptr = MsgDeQ(&msg_q[msg_q_id]);
-    memcpy(receiving_msg_ptr, queued_msg_ptr, sizeof(msg_t));
+    *receiving_msg_ptr = *queued_msg_ptr;
   } else {  //no message   
     cons_printf("\n! MsgRcvISR: BLOCKING process # %d !\n", running_pid);
     EnQ(running_pid, &msg_q[msg_q_id].wait_q);

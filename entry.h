@@ -32,11 +32,11 @@ extern void TimerEntry();        // code defined in entry.S
 extern void GetPidEntry();      // code defined in entry.S
 extern void SleepEntry();       // code defined in entry.S
 extern void StartProcEntry();
-/*
+
 extern void SemGetEntry();
 extern void SemWaitEntry();
 extern void SemPostEntry();
-*/
+
 extern void MsgSndEntry();
 extern void MsgRcvEntry();
 

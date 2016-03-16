@@ -38,6 +38,18 @@ ENTRY(SleepEntry)
 ENTRY(StartProcEntry)
   pushl $STARTPROC_INTR
   jmp CompleteTFenterKernel
+
+ENTRY(SemGetEntry)
+  pushl $SEMGET_INTR
+  jmp CompleteTFenterKernel
+  
+ENTRY(SemWaitEntry)
+  pushl $SEMWAIT_INTR
+  jmp CompleteTFenterKernel
+  
+ENTRY(SemPostEntry)
+  pushl $SEMPOST_INTR
+  jmp CompleteTFenterKernel
   
 ENTRY(MsgSndEntry)
   pushl $MSGSND_INTR

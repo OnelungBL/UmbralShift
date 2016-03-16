@@ -20,6 +20,8 @@
  char proc_stack[MAX_PROC_NUM][PROC_STACK_SIZE]; // runtime stacks of processes
  int OS_clock;
 struct i386_gate *IDT_ptr;
+ sem_t sem[Q_SIZE];
+ q_t sem_q;
  msg_q_t msg_q[MAX_PROC_NUM];
 
 int main() {
@@ -48,6 +50,10 @@ void InitKernelData() {
    MyBzero((char *)&sleep_q, sizeof(q_t));  //reset sleep_q: Procedure.txt line:26
    MyBzero((char *)&free_q, sizeof(q_t)); //call MyBzero() to clear queues (which is to be coded in toolfunc.h/.c)
    MyBzero((char *)&ready_q, sizeof(q_t)); //call MyBzero() to clear queues (which is to be coded in toolfunc.h/.c)
+   MyBzero((char *)&sem_q, sizeof(q_t));
+   for(i=0; i<Q_SIZE; i++) {
+   	EnQ(i, &sem_q);
+   }
    MyBzero((char *)&msg_q, sizeof(msg_q_t));
 
    for(i=0; i<MAX_PROC_NUM; i++){ //loop number i from 0 to 19:
@@ -65,6 +71,9 @@ void InitKernelControl() { // learned from timer lab, remember to modify main.h
    SetEntry(GETPID_INTR, GetPidEntry);
    SetEntry(SLEEP_INTR, SleepEntry);
    SetEntry(STARTPROC_INTR, StartProcEntry);
+   SetEntry(SEMGET_INTR, SemGetEntry);
+   SetEntry(SEMWAIT_INTR, SemWaitEntry);
+   SetEntry(SEMPOST_INTR, SemPostEntry);
    SetEntry(MSGSND_INTR, MsgSndEntry);
    SetEntry(MSGRCV_INTR, MsgRcvEntry);
    outportb(0x21, ~1);		// 0x21 is PIC mask, ~1 is mask //program the mask of PIC
@@ -121,6 +130,15 @@ void KernelMain(TF_t *TF_ptr) {
         case STARTPROC_INTR:
 		new_pid = DeQ(&free_q);
         	StartProcISR(new_pid, TF_ptr->eax);
+        	break;
+        case SEMGET_INTR:
+        	SemGetISR(TF_ptr->eax);
+        	break;
+        case SEMWAIT_INTR:
+        	SemWaitISR(TF_ptr->eax);
+        	break;
+        case SEMPOST_INTR:
+        	SemPostISR(TF_ptr->eax);
         	break;
         case MSGSND_INTR:
                 MsgSndISR(TF_ptr->eax);

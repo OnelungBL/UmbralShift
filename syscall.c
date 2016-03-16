@@ -29,6 +29,29 @@ void StartProc(func_ptr_t func_ptr) {
        : "%eax");                
 }
 
+int SemGet(int limit) {
+   int semID;
+   asm("movl %1, %%eax; int $51; movl %%ebx, %0"
+      : "=g" (semID)
+      : "g" (limit)
+      : "%eax", "%ebx");
+   return semID;
+}
+
+void SemWait(int semID) {
+      asm("movl %0, %%eax; int $52"
+       :                        
+       : "g" (semID)         
+       : "%eax");                
+}
+
+void SemPost(int semID) {
+      asm("movl %0, %%eax; int $53"
+       :                        
+       : "g" (semID)         
+       : "%eax"); 
+}
+
 void MsgSnd(msg_t *msg_addr) {
       asm("movl %0, %%eax; int $54"
        :                                 

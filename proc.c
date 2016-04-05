@@ -56,14 +56,14 @@ void PrintDriver() {  //FROM INSTRUCTOR WEBSITE
 		MsgRcv(&msg); // get if msg to print                     
 		cons_printf("PrintDriver (PID 2) now prints...");
 		p = msg.data;
-		while (p != '\0') {
+		while (*p != '\0') {
 			outportb(LPT1_BASE+LPT_DATA, *p);       // write char to DATA reg
 			code = inportb(LPT1_BASE+LPT_CONTROL);  // read CONTROL reg
 			outportb(LPT1_BASE+LPT_CONTROL, code|PC_STROBE); // write CONTROL, STROBE added
 			for (i=0; i<50; i++) { IO_DELAY(); } // needs delay
 			outportb(LPT1_BASE+LPT_CONTROL, code);  // send back original CONTROL
 			SemWait(printing_semaphore);
-			p = p + 1;
+			++p;
 		} //end while p != '/0'
 		
 	} //end forever loop

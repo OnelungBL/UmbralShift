@@ -81,8 +81,6 @@ void InitKernelControl() { // learned from timer lab, remember to modify main.h
 	SetEntry(MSGSND_INTR, MsgSndEntry);
 	SetEntry(MSGRCV_INTR, MsgRcvEntry);
 	outportb(0x21, ~1);		// 0x21 is PIC mask, ~1 is mask //program the mask of PIC
-	outportb(0x67, ~1); //IRQ0 and IRQ7?
-	//(but NO "sti" which is built into the process trapframe)
 }
 
 void Scheduler() {  // to choose running PID
@@ -129,8 +127,8 @@ void KernelMain(TF_t *TF_ptr) {
 		}
 		break;
 	case IRQ7_INTR:
-		outportb(0x20,0x67);
 		SemPostISR(printing_semaphore);
+		outportb(0x20,0x67);
 		break;
 	case GETPID_INTR:
 		GetPidISR();

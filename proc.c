@@ -20,6 +20,9 @@ void IdleProc() {
 void InitProc() {
 	char key;
 	msg_t msg;
+	msg.sender = running_pid;
+	msg.recipient = 2;
+	msg.OS_clock = OS_clock;
 	MyStrcpy("Greetings from Team UmbralShift!\n", msg.data);
 	for(;;){ //loop forever
 		Sleep(1); //sleep for a second

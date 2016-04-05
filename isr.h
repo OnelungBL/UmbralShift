@@ -17,5 +17,4 @@ void SemPostISR(int);
 void MsgSndISR(int);
 void MsgRcvISR(int);
 
-
 #endif

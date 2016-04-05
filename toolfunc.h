@@ -11,6 +11,5 @@ void EnQ(int, q_t *);
 void MsgEnQ(msg_t *, msg_q_t *);
 msg_t * MsgDeQ(msg_q_t *);
 void MyStrcpy(char *, char *);
-
 #endif
 

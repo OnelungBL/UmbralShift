@@ -11,44 +11,45 @@
 #define Q_SIZE 20
 #define PROC_STACK_SIZE 4096 // process runtime stack in bytes
 #define INITIAL_SEMAPHORE_LIMIT 1
+#define INITIAL_PRINT_SEMAPHORE_LIMIT 0
 #define MSG_DATA_LENGTH 101
 
 // this is the same as constants defines: UNUSED=0, READY=1, etc.
 typedef enum {FREE, READY, RUN, SLEEP, WAIT, ZOMBIE, FORKWAIT} state_t;
 
 typedef struct {             // PCB describes proc image
-   state_t state;            // state of process
-   int runtime;              // runtime since loaded
-   int total_runtime;        // total runtime since created
-   TF_t *TF_ptr;             // points to trapframe of process
-   int wake_time;
+	state_t state;            // state of process
+	int runtime;              // runtime since loaded
+	int total_runtime;        // total runtime since created
+	TF_t *TF_ptr;             // points to trapframe of process
+	int wake_time;
 } pcb_t;
 
 typedef struct {             // proc queue type
-   int head, tail, len;      // where head and tail are, and current length
-   int q[Q_LEN];             // indices into q[] array to place or get element
+	int head, tail, len;      // where head and tail are, and current length
+	int q[Q_LEN];             // indices into q[] array to place or get element
 } q_t;
 
 typedef void (*func_ptr_t)(void); // void-return function pointer type
 
 typedef struct {
-   int limit; //count to limit number of processes to access a critical code section
-   q_t wait_q; //queue for blocking/waiting PIDs
+	int limit; //count to limit number of processes to access a critical code section
+	q_t wait_q; //queue for blocking/waiting PIDs
 } sem_t;
 
 typedef struct {
-  int sender;
-  int recipient;
-  int OS_clock;
-  char data[MSG_DATA_LENGTH];
+	int sender;
+	int recipient;
+	int OS_clock;
+	char data[MSG_DATA_LENGTH];
 } msg_t;
 
 typedef struct {
-  int head;
-  int tail;
-  int len;
-  msg_t msg[Q_LEN];
-  q_t wait_q;
+	int head;
+	int tail;
+	int len;
+	msg_t msg[Q_LEN];
+	q_t wait_q;
 } msg_q_t;
 
 #endif

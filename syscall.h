@@ -9,6 +9,6 @@ void StartProc(func_ptr_t);
 int SemGet(int);
 void SemWait(int);
 void SemPost(int);
-void MsgSnd(msg_t *);
+void MsgSnd(int, msg_t *);
 void MsgRcv(msg_t *);
 #endif

@@ -5,7 +5,6 @@
 
 #include <spede/machine/pic.h>
 
-
 #define TIMER_INTR 32
 #define IRQ7_INTR 39
 #define GETPID_INTR 48
@@ -21,7 +20,6 @@
 #define KERNEL_DATA 0x10         // kernel's data segment
 #define KERNEL_STACK_SIZE 32768  // kernel's stack byte size
 
-// ISR Entries
 #ifndef ASSEMBLER
 
 __BEGIN_DECLS

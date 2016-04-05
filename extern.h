@@ -3,7 +3,7 @@
 #ifndef _EXTERN_H_
 #define _EXTERN_H_
 
-#include "typedef.h"                // defines q_t, pcb_t, MAX_PROC_NUM, PROC_STACK_SIZE
+#include "typedef.h"
 
 extern int running_pid;             // PID of currently-running process, -1 means none
 extern q_t ready_q, free_q, sleep_q;                        // ready to run, not used proc IDs

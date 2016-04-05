@@ -14,6 +14,10 @@
 #define INITIAL_PRINT_SEMAPHORE_LIMIT 0
 #define MSG_DATA_LENGTH 101
 
+#define PROC_IDLE 0
+#define PROC_INIT 1
+#define PROC_PRINT 2
+
 // this is the same as constants defines: UNUSED=0, READY=1, etc.
 typedef enum {FREE, READY, RUN, SLEEP, WAIT, ZOMBIE, FORKWAIT} state_t;
 

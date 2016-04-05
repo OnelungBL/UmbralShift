@@ -20,9 +20,7 @@ void IdleProc() {
 void InitProc() {
 	char key;
 	msg_t msg;
-	msg.sender = running_pid;
-	msg.recipient = 2;
-	msg.OS_clock = OS_clock;
+	msg.recipient = PROC_PRINT;
 	MyStrcpy("Greetings from Team UmbralShift!\n", msg.data);
 	for(;;){ //loop forever
 		Sleep(1); //sleep for a second
@@ -30,7 +28,7 @@ void InitProc() {
 			key = cons_getchar(); 
 			switch(key){
 			case 'p': //if 'p' pressed, send a greeting message to PrintDriver (PID 2)
-				MsgSnd(2, &msg);
+				MsgSnd(&msg);
 				break;
 			case 'b': //if 'b: is pressed, execute GDB breakpoint
 				breakpoint();

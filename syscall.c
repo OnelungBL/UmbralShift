@@ -52,12 +52,20 @@ void SemPost(int semID) {
 	: "%eax"); 
 }
 
-void MsgSnd(int mid, msg_t *msg) {
-	asm("movl %0, %%eax; movl %1, %%ebx; int $54"
-	:                                 
-	: "g" (mid), "g" (msg)
-	: "%eax", "%ebx"); 
+
+void MsgSnd(msg_t *msg_addr) {
+      asm("movl %0, %%eax; int $54"
+       :                                 
+       : "g" (msg_addr)
+       : "%eax"); 
 }
+
+//void MsgSnd(msg_t *msg_addr, msg_t *msg) {
+//	asm("movl %0, %%eax; movl %1, %%ebx; int $54"
+//	:                                 
+//	: "g" (msg_addr), "g" (msg)
+//	: "%eax", "%ebx"); 
+//}
 
 void MsgRcv(msg_t *msg_addr) {
 	asm("movl %0, %%eax; int $55"

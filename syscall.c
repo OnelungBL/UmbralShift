@@ -2,7 +2,6 @@
 // software interrupt/syscalls, i.e., kernel service API
 #include "typedef.h"
 
-
 int GetPid() {                   // no input, has return
 	int pid;
 
@@ -52,18 +51,17 @@ void SemPost(int semID) {
 	: "%eax"); 
 }
 
-
 void MsgSnd(msg_t *msg_addr) {
-      asm("movl %0, %%eax; int $54"
-       :                                 
-       : "g" (msg_addr)
-       : "%eax"); 
+	asm("movl %0, %%eax; int $54"
+	:                        
+	: "g" (msg_addr)         
+	: "%eax"); 
 }
 
 void MsgRcv(msg_t *msg_addr) {
 	asm("movl %0, %%eax; int $55"
-	:                                
-	: "g" (msg_addr)        
+	:                        
+	: "g" (msg_addr)         
 	: "%eax"); 
 }
 

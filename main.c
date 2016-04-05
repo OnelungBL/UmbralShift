@@ -57,7 +57,7 @@ void InitKernelData() {
 	for(i=0; i<Q_SIZE; i++) {
 		EnQ(i, &sem_q);
 	}
-	//MyBzero((char *)&msg_q, sizeof(msg_q_t));
+	MyBzero((char *)&msg_q, sizeof(msg_q_t));
 
 	for(i=0; i<MAX_PROC_NUM; i++){ //loop number i from 0 to 19:
 		EnQ(i, &free_q); //call EnQ() to enqueue i to free_q
@@ -81,6 +81,7 @@ void InitKernelControl() { // learned from timer lab, remember to modify main.h
 	SetEntry(MSGSND_INTR, MsgSndEntry);
 	SetEntry(MSGRCV_INTR, MsgRcvEntry);
 	outportb(0x21, ~1);		// 0x21 is PIC mask, ~1 is mask //program the mask of PIC
+        outportb(0x21, inportb(0x21)&0x7f);
 }
 
 void Scheduler() {  // to choose running PID
@@ -104,20 +105,15 @@ void KernelMain(TF_t *TF_ptr) {
 	int idx;
 	int sleepQLen;
 	pcb[running_pid].TF_ptr = TF_ptr;  //save TF_ptr to PCB of running process
-
 	switch(TF_ptr->intr_id) {
 		//http://athena.ecs.csus.edu/~changw/159/0/ManualCh8IRQandIO.pdf  - outport reference
 	case TIMER_INTR:
-		outportb(0x20, 0x60);
 		TimerISR(); //dismiss timer event: send PIC with a code
 		OS_clock++;
 		sleepQLen = sleep_q.len;
 		for(idx=0; idx<sleepQLen; idx++) {
 			int pid;
 			pid = DeQ(&sleep_q);
-			if (pid == -1) {
-				running_pid = 0;
-			}
 			if (OS_clock == pcb[pid].wake_time) {
 				EnQ(pid, &ready_q);
 				pcb[pid].state = READY;
@@ -128,7 +124,6 @@ void KernelMain(TF_t *TF_ptr) {
 		break;
 	case IRQ7_INTR:
 		SemPostISR(printing_semaphore);
-		outportb(0x20,0x67);
 		break;
 	case GETPID_INTR:
 		GetPidISR();
@@ -138,7 +133,11 @@ void KernelMain(TF_t *TF_ptr) {
 		break;
 	case STARTPROC_INTR:
 		new_pid = DeQ(&free_q);
-		StartProcISR(new_pid, TF_ptr->eax);
+                if (new_pid != -1) {
+		        StartProcISR(new_pid, TF_ptr->eax);
+                } else {
+                        cons_printf("Panic: no more available process ID left!\n"); 
+                }
 		break;
 	case SEMGET_INTR:
 		SemGetISR(TF_ptr->eax);

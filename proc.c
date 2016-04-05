@@ -55,7 +55,7 @@ void PrintDriver() {  //FROM INSTRUCTOR WEBSITE
 	for(;;) { //forever loop
 		MsgRcv(&msg); // get if msg to print                     
 		cons_printf("PrintDriver (PID 2) now prints...");
-		p = msg.data;
+		*p = *msg.data;
 		while (*p != '\0') {
 			outportb(LPT1_BASE+LPT_DATA, *p);       // write char to DATA reg
 			code = inportb(LPT1_BASE+LPT_CONTROL);  // read CONTROL reg

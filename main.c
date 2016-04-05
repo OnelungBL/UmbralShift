@@ -57,7 +57,7 @@ void InitKernelData() {
 	for(i=0; i<Q_SIZE; i++) {
 		EnQ(i, &sem_q);
 	}
-	MyBzero((char *)&msg_q, sizeof(msg_q_t));
+	//MyBzero((char *)&msg_q, sizeof(msg_q_t));
 
 	for(i=0; i<MAX_PROC_NUM; i++){ //loop number i from 0 to 19:
 		EnQ(i, &free_q); //call EnQ() to enqueue i to free_q

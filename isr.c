@@ -23,7 +23,6 @@ void StartProcISR(int new_pid, int func_addr) {
 	MyBzero((char *)&proc_stack[new_pid], PROC_STACK_SIZE); //call MyBzero() to clear pcb[i]
 	MyBzero((char *)&msg_q[new_pid], sizeof(msg_q_t)); //call MyBzero() to clear msg_q_t
 
-
 	// set TF_ptr of PCB to close to end (top) of stack, then fill out
 
 	pcb[new_pid].TF_ptr = (TF_t *)&proc_stack[new_pid][PROC_STACK_SIZE];
@@ -104,8 +103,8 @@ void MsgSndISR(int msg_addr) {
   int freed_pid;
   incoming_msg_ptr = (msg_t *) msg_addr;
   msg_q_id = incoming_msg_ptr->recipient;
-  incoming_msg_ptr->OS_clock = OS_clock; //authentication ?
-  incoming_msg_ptr->sender = running_pid; //authentication ?
+  incoming_msg_ptr->OS_clock = OS_clock;
+  incoming_msg_ptr->sender = running_pid;
 
 if (msg_q[msg_q_id].wait_q.len == 0) {
     MsgEnQ(incoming_msg_ptr, &msg_q[msg_q_id]);
@@ -123,7 +122,7 @@ void MsgRcvISR(int msg_addr) {
   msg_t *queued_msg_ptr;
   int msg_q_id;
   receiving_msg_ptr = (msg_t *)msg_addr;
-  msg_q_id = running_pid; //receiving_msg_ptr->recipient;
+  msg_q_id = running_pid;
   if (msg_q[msg_q_id].len > 0) {
     queued_msg_ptr = MsgDeQ(&msg_q[msg_q_id]);
     *receiving_msg_ptr = *queued_msg_ptr;

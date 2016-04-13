@@ -104,8 +104,8 @@ void ShellProc() { //FROM INSTRUCTOR WEBSITE
         outportb(COM2_IOBASE+IER, IER_ERXRDY|IER_ETXRDY); // enable TX, RX events
         IO_DELAY();
 
-//Set recipient before making msgrcv request to "tell it which mailbox"
-        MyStrcpy("\n\n\nHello World!  Team UmbralShift here!\n\n", my_msg.data);        
+		//MsgRecipient only needs to be set for MsgSnd.
+		MyStrcpy("\n\n\nHello World!  Team UmbralShift here!\n\n", my_msg.data);        
         my_msg.recipient = port_data.stdout_pid;
         MsgSnd(&my_msg); //(completion timing reply, content don't care)
         MsgRcv(&my_msg);

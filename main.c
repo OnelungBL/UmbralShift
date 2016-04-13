@@ -8,7 +8,7 @@
 #include "toolfunc.h"   // handy functions for Kernel
 #include "proc.h"       // processes such as IdleProc()
 #include "typedef.h"    // data types
-#include "entry.h"	// TIMER_INTR/TimerEntry
+#include "entry.h"		// TIMER_INTR/TimerEntry
 #include "extern.h"
 
 // kernel data stuff:
@@ -54,17 +54,17 @@ void SetEntry(int entry_num, func_ptr_t func_ptr) {
 
 void InitKernelData() {
 	int i;
-	OS_clock = 0; //reset os_clock to zero:  Procedure.txt line: 25
-	MyBzero((char *)&sleep_q, sizeof(q_t));  //reset sleep_q: Procedure.txt line:26
-	MyBzero((char *)&free_q, sizeof(q_t)); //call MyBzero() to clear queues (which is to be coded in toolfunc.h/.c)
-	MyBzero((char *)&ready_q, sizeof(q_t)); //call MyBzero() to clear queues (which is to be coded in toolfunc.h/.c)
+	OS_clock = 0;
+	MyBzero((char *)&sleep_q, sizeof(q_t));
+	MyBzero((char *)&free_q, sizeof(q_t));
+	MyBzero((char *)&ready_q, sizeof(q_t));
 	MyBzero((char *)&sem_q, sizeof(q_t));
 	for(i=0; i<Q_LEN; i++) {
 		EnQ(i, &sem_q);
 	}
 	MyBzero((char *)&msg_q, sizeof(msg_q_t)*MAX_PROC_NUM);
 
-	for(i=0; i<MAX_PROC_NUM; i++){ //loop number i from 0 to 19:
+	for(i=0; i<MAX_PROC_NUM; i++){
 		EnQ(i, &free_q); //call EnQ() to enqueue i to free_q
 		MyBzero((char *)&pcb[i], sizeof(pcb_t)); //call MyBzero() to clear pcb[i]
 		MyBzero((char*)&msg_q[i], sizeof(msg_q_t)); //clear each queue in msg queue
@@ -85,7 +85,7 @@ void InitKernelControl() { // learned from timer lab, remember to modify main.h
 	SetEntry(SEMPOST_INTR, SemPostEntry);
 	SetEntry(MSGSND_INTR, MsgSndEntry);
 	SetEntry(MSGRCV_INTR, MsgRcvEntry);
-        outportb(0x21, ~137); // ~10001001 ~0x89 01110110 0x76
+    outportb(0x21, ~137); // ~10001001 ~0x89 01110110 0x76
 }
 
 void Scheduler() {  // to choose running PID
@@ -110,7 +110,6 @@ void KernelMain(TF_t *TF_ptr) {
 	int sleepQLen;
 	pcb[running_pid].TF_ptr = TF_ptr;  //save TF_ptr to PCB of running process
 	switch(TF_ptr->intr_id) {
-		//http://athena.ecs.csus.edu/~changw/159/0/ManualCh8IRQandIO.pdf  - outport reference
 	case TIMER_INTR:
 		TimerISR(); //dismiss timer event: send PIC with a code
 		OS_clock++;
@@ -133,7 +132,6 @@ void KernelMain(TF_t *TF_ptr) {
 		break;
 	case IRQ7_INTR:
 		SemPostISR(printing_semaphore);
-                //outportb(0x20, 0x67);
 		break;
 	case GETPID_INTR:
 		GetPidISR();
@@ -185,18 +183,5 @@ void KernelMain(TF_t *TF_ptr) {
 //    LSR Line Status Reg
 //    CFCR Char Format Control Reg
 //    LSR_TSRE Line Status Reg, Xmit+Shift Regs Empty
-
-
-/*
-Lessons Learned:
-~ is inversion, hex, decimal and binary
-pointer operation
-GDB debugging on pcb, msg_q etc
-Troubleshooting ISR
-only msgSnd requires recipient setting,
-everything else is handled by ISR
-
-*/
-
 
 

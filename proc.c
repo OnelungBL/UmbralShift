@@ -81,55 +81,71 @@ void ShellProc() { //FROM INSTRUCTOR WEBSITE
 	while(1) {                        // run the Demo.dli to see how it works
 		while(1) {
 			MyStrcpy(my_msg.data, "UmbralShift login > ");
-            my_msg.recipient=port_data.stdout_pid;
-            MsgSnd(&my_msg);
+                        my_msg.recipient=port_data.stdout_pid;
+                        MsgSnd(&my_msg);
 			MsgRcv(&my_msg);
-			MyStrcpy(my_msg.data, login);
 			
+                        //get input
+                        my_msg.recipient=port_data.stdin_pid;
+                        MsgSnd(&my_msg);
+                        MsgRcv(&my_msg);
+                        MyStrcpy(login, my_msg.data);                       
+		
 			MyStrcpy(my_msg.data, "UmbralShift password > ");
-            my_msg.recipient=port_data.stdout_pid;
-            MsgSnd(&my_msg);
-			port_data.echo_mode=0;
+                        my_msg.recipient=port_data.stdout_pid;
+                        MsgSnd(&my_msg);
 			MsgRcv(&my_msg);
-			port_data.echo_mode=1;
-			MyStrcpy(password, my_msg.data);			
 			
+                        //get input
+			port_data.echo_mode=0;
+                        my_msg.recipient=port_data.stdin_pid;
+                        MsgSnd(&my_msg);
+                        MsgRcv(&my_msg);                        
+
+			MyStrcpy(password, my_msg.data);
+                        port_data.echo_mode=1;
+
 			//if login and password compare is equal; break loop and continue
 			//otherwise, continue to prompt for username/password
 			
 			if (MyStrcmp(password, login, 101) == 1) break;
 			
 			MyStrcpy(my_msg.data, "Invalid password!\n");
-            my_msg.recipient=port_data.stdout_pid;
-            MsgSnd(&my_msg);
+                        my_msg.recipient=port_data.stdout_pid;
+                        MsgSnd(&my_msg);
 			MsgRcv(&my_msg);
 			
 		}
 		
 		while(1) {
 			MyStrcpy(my_msg.data, "UmbralShift shell > ");
-            my_msg.recipient=port_data.stdout_pid;
-            MsgSnd(&my_msg);
+                        my_msg.recipient=port_data.stdout_pid;
+                        MsgSnd(&my_msg);
 			MsgRcv(&my_msg);
-			
-			if (!my_msg.data[0]) continue; //if pointer is null go back to beginning of while loop
-			
-			
-			if ((MyStrcmp(&my_msg.data[0], "end", (MyStrlen(&my_msg.data[0])*sizeof(char)) == 1)) || (MyStrcmp(&my_msg.data[0], "000", (MyStrlen(&my_msg.data[0])*sizeof(char))) == 1)) break;
-			
-			if ((MyStrcmp(&my_msg.data[0], "dir", (MyStrlen(&my_msg.data[0])*sizeof(char)) == 1)) || (MyStrcmp(&my_msg.data[0], "111", (MyStrlen(&my_msg.data[0])*sizeof(char))) == 1)) {
+
+                        my_msg.recipient=port_data.stdin_pid;
+                        MsgSnd(&my_msg);
+			MsgRcv(&my_msg);
+                        
+			if (!my_msg.data) continue; //if pointer is null go back to beginning of while loop
+
+                        if ((MyStrcmp(&my_msg.data[0], "dir", 3)==1) || (MyStrcmp(&my_msg.data[0], "000", 3)==1)) {
 				DirSub(my_msg.data, FileServicePid);
+                                continue;
+                        }
+
+                        if ((MyStrcmp(&my_msg.data[0], "end", 3)==1) || (MyStrcmp(&my_msg.data[0], "111", 3)==1)) {
+				break;
+                        }
+
+                        if ((MyStrcmp(&my_msg.data[0], "cat", 3)==1) || (MyStrcmp(&my_msg.data[0], "222", 3)==1)) {
+                                CatSub(my_msg.data, FileServicePid);
 				continue;
-			}
-			
-			if ((MyStrcmp(&my_msg.data[0], "cat", (MyStrlen(&my_msg.data[0])*sizeof(char)) == 1)) || (MyStrcmp(&my_msg.data[0], "222", (MyStrlen(&my_msg.data[0])*sizeof(char))) == 1)) {
-				CatSub(my_msg.data, FileServicePid);
-				continue;
-			}			
+                        }						
 			
 			MyStrcpy(my_msg.data, "What's up?\n");
-            my_msg.recipient=port_data.stdout_pid;
-            MsgSnd(&my_msg);
+                        my_msg.recipient=port_data.stdout_pid;
+                        MsgSnd(&my_msg);
 			MsgRcv(&my_msg);
 		}
 	}		
@@ -145,7 +161,6 @@ void StdinProc() { //FROM INSTRUCTOR WEBSITE
 		while (1) {
 			char ch;
 			SemWait(port_data.RX_semaphore);
-			//ch = (char) &port_data.RX_buffer;
 			ch = DeQ(&port_data.RX_buffer);
 			if (ch == '\r') break;  // delimiter encountered
 			*p++ = ch;
@@ -210,12 +225,14 @@ void DirSub(char *cmd_str, int FileServicePID) {
 	
 	// if cmd_str is "dir" assume "dir /\0" (on root dir)
 	// else, assume user specified an target after first 4 letters "dir "
-	if(cmd_str[3] == ' ') {
+	if((cmd_str[3] == ' ') || (cmd_str[3] == '\t')) {
 		cmd_str += 4; // skip 1st 4 letters "dir " and get the rest: obj...
 		} else {
 		cmd_str[0] = '/';
 		cmd_str[1] = '\0'; // null-terminate the target
 	}
+ 
+
 	
 	// apply standard "check target" protocol
 	my_msg.code[0] = CHK_OBJ;
@@ -333,7 +350,7 @@ void CatSub(char *cmd_str, int FileServicePID) {
 		MsgRcv(&my_msg);
 		
 		// did it read OK?
-		if (my_msg.code[0]==GOOD) break;
+		if (my_msg.code[0]!=GOOD) break;
 		
 		// otherwise, show file content via port_data.stdout_pid
 		my_msg.recipient = port_data.stdout_pid;
@@ -347,13 +364,13 @@ void CatSub(char *cmd_str, int FileServicePID) {
 	my_msg.recipient = FileServicePID;
 	MsgSnd(&my_msg);
 	MsgRcv(&my_msg);
-		
-	
+
+
 	// if return code is not good, show error msg onto terminal
-		if (my_msg.code[0]==GOOD) {
-		//my_msg.recipient =  port_data.stdout_pid;;
-		//MsgSnd(&my_msg);
-		//MsgRcv(&my_msg);
-		sprintf("%s\n", my_msg.data);
+	if (my_msg.code[0]!=GOOD) {
+                sprintf(my_msg.data, "Error: %d\n", my_msg.code[0]);
+		my_msg.recipient =  port_data.stdout_pid;
+		MsgSnd(&my_msg);
+		MsgRcv(&my_msg);
 	}
 }

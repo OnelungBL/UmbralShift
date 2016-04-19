@@ -180,7 +180,6 @@ void RX() { // read char from port to queue in_q and echo_q
         char ch;
         // use 127 to mask out msb (rest 7 bits in ASCII range)
         ch = inportb(COM2_IOBASE+DATA) & 0x7F;  // mask 0111 1111
-
         //enqueue ch to RX buffer of port data
         EnQ(ch, &port_data.RX_buffer);
         //SemPostISR RX_semaphore of port data

@@ -17,7 +17,7 @@
 
 #define PROC_IDLE 0
 #define PROC_INIT 1
-#define PROC_PRINT 2
+#define PROC_FILE 2
 #define PROC_SHELL 3
 #define PROC_STDIN 4
 #define PROC_STDOUT 5

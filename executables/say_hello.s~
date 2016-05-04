@@ -1,0 +1,52 @@
+# say_hello.s
+#
+# In order to MsgSnd(&my_msg)/MsgRcv(&my_msg), 1st calc DRAM addr of my_msg.
+#
+# As program runs, subtract 4096 from ESP to get where the DRAM starts.
+# $my_msg is given location 2G+x (a virtual address given by gcc link386).
+# Subtract 2G from $my_msg we get x.
+# Add x to the actual beginning of DRAM, that's where my_msg really is.
+
+.text                       # code segment
+.global _start              # _start is main()
+
+_start:
+   # calculate where my_msg is, save (push) 2 copies
+   pushl %esp                   #ESP is end of dram
+   popl %edx                    #use edx to manipulate
+   subl $0x1000, %edx           #subtract 4096 from ESP to get DRAM Start
+   movl $msg, %ecx              #move message address into ecx
+   subl $0x80000080, %ecx       #subtract 2G
+   addl %edx, %ecx              #Find MSG at DRAM location 
+   pushl %ecx                   #save x on stack
+   pushl %ecx                   #save x to stack
+
+   # StdoutPID is 5 (this must match your own)
+   # set msg.recipient = 5 (4 bytes offset, .data)
+   # call MsgSnd(&my_msg)
+   
+   popl %eax    #put translated msg address in eax
+#   movl $5, %ebx # hard coded stdout_pid
+#   movl %ebx, 4(%eax) #offset
+   int $54      #send msg
+
+   # pop a copy of my_msg address
+   # call MsgRcv(&my_msg)
+#   int $55
+
+   # pop another copy of my_msg address
+   # get my_msg.OS_clock (offset 8, .data) as exit code (eax)
+   # call Exit(my_msg.OS_clock)
+
+.data       # data segment always follows code segment in RAM
+msg:     # my_msg (this must match your own msg_t)
+   .int 0      #sender
+   .int 0      #recipient
+   .int 0      #OS_clock;
+   .ascii "Hi\n\0" #string (length: 4)
+   .rept 97    #7+97 = 101 characters
+   .ascii "\0"  #padding nulls  
+   .endr        #end repetition
+   .int 0      #STATUS
+   .int 0      #Owner/FD
+   .int 0      #bytes

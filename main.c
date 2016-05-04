@@ -56,9 +56,9 @@ void SetEntry(int entry_num, func_ptr_t func_ptr) {
 
 void InitKernelData() {
 	int i;
-        int dram_addr;
+    int dram_addr;
 	OS_clock = 0;
-        dram_addr = 0xe00000;
+    dram_addr = 0xe00000;
 	MyBzero((char *)&sleep_q, sizeof(q_t));
 	MyBzero((char *)&free_q, sizeof(q_t));
 	MyBzero((char *)&ready_q, sizeof(q_t));
@@ -145,6 +145,7 @@ void KernelMain(TF_t *TF_ptr) {
 		break;
 	case IRQ7_INTR:
 		SemPostISR(printing_semaphore);
+                outportb(0x20,0x67);
 		break;
 	case GETPID_INTR:
 		GetPidISR();

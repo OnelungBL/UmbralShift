@@ -205,7 +205,8 @@ void ForkISR(int data, int size) { //does addr really go here?
         DRAM_page = -1;
 
         if (free_q.len == 0) {
-
+                cons_printf("Panic: no free PID left!\n");
+                pcb[running_pid].TF_ptr->ecx = -1;
         } else {
                 for(i=0; i<DRAM_PAGE_COUNT; i++) {
                         if (DRAM[i].owner == -1) {
@@ -222,11 +223,12 @@ void ForkISR(int data, int size) { //does addr really go here?
                         DRAM[DRAM_page].owner = freed_pid;
                         EnQ(freed_pid, &ready_q);
                 	MyBzero((char *)&msg_q[freed_pid], sizeof(msg_q_t)); //call MyBzero() to clear msg_q of freed_pid
-                	MyBzero((char *)&proc_stack[freed_pid], PROC_STACK_SIZE); //call MyBzero() to clear pcb[freed_pid]
+                        MyBzero((char *)&pcb[freed_pid], sizeof(pcb_t));                        
+                       	MyBzero((char *)&proc_stack[freed_pid], PROC_STACK_SIZE); //call MyBzero() to clear pcb[freed_pid]
                         pcb[freed_pid].state = READY;
                         pcb[freed_pid].ppid = running_pid;
                         MyMemcpy( (char* )DRAM[DRAM_page].addr, (char*)data, size);
-//                      pcb[freed_pid].TF_ptr = (TF_t *) (DRAM[DRAM_page].addr + 0x1000 - sizeof(TF_t)); //find space at end of page for trap frame
+                        pcb[freed_pid].TF_ptr = (TF_t *) (DRAM[DRAM_page].addr + 0x1000 - sizeof(TF_t)); //find space at end of page for trap frame
 	                pcb[freed_pid].TF_ptr = (TF_t *)&proc_stack[freed_pid][PROC_STACK_SIZE];
 	                pcb[freed_pid].TF_ptr--; // (against last byte of stack, has space for a trapframe to build)
 
@@ -236,7 +238,7 @@ void ForkISR(int data, int size) { //does addr really go here?
 	                pcb[freed_pid].TF_ptr->es = get_es();
 	                pcb[freed_pid].TF_ptr->fs = get_fs();
 	                pcb[freed_pid].TF_ptr->gs = get_gs();
-	                pcb[freed_pid].TF_ptr->eip = DRAM[DRAM_page].addr + 128;                        
+	                pcb[freed_pid].TF_ptr->eip = DRAM[DRAM_page].addr + 0x80;
                 }
         }
         return;
@@ -245,8 +247,7 @@ void ForkISR(int data, int size) { //does addr really go here?
 void WaitISR() {
         int i;
         int dram_page;
-        dram_page = -1;
-        
+        dram_page = -1;    
         for (i=0; i<DRAM_PAGE_COUNT; i++) {
                 if ((pcb[DRAM[i].owner].ppid == running_pid) && (pcb[DRAM[i].owner].state == ZOMBIE)) {
                         dram_page=i;
@@ -272,7 +273,6 @@ void WaitISR() {
                         break;
                 }
         }
-
         return;
 }
 void ExitISR() {

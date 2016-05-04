@@ -167,7 +167,6 @@ void ShellProc() { //FROM INSTRUCTOR WEBSITE
                 		MsgRcv(&my_msg);   
                                 if (my_msg.code[0] != GOOD) continue;
                                 child_pid = Wait(&exit_code);
-printf("exit code: %d\n", (int)exit_code);
                                 sprintf(my_msg.data, "\nChild PID %d exits, exit code is %d.\n", child_pid, exit_code);
                                 my_msg.recipient=port_data.stdout_pid;
                                 MsgSnd(&my_msg);

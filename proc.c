@@ -50,6 +50,9 @@ void ShellProc() { //FROM INSTRUCTOR WEBSITE
         int exit_code;
         MyBzero((char *)&attr_ptr, sizeof(attr_t));
 
+    //clear login and password strings
+    MyBzero((char*)&login, sizeof(char)*TERMINAL_MSG_LENGTH);
+    MyBzero((char*)&password, sizeof(char)*TERMINAL_MSG_LENGTH);
 	FileServicePID = PROC_FILE;
 	my_pid = GetPid();  // get my PID
 	//   initialize the interface port-data structure (port_data_t port_data):
@@ -113,7 +116,8 @@ void ShellProc() { //FROM INSTRUCTOR WEBSITE
 			//otherwise, continue to prompt for username/password
 			
 			if (MyStrcmp(password, login, TERMINAL_MSG_LENGTH) == 1) break;
-			
+			    MyBzero((char*)&login, sizeof(char)*TERMINAL_MSG_LENGTH);
+    			MyBzero((char*)&password, sizeof(char)*TERMINAL_MSG_LENGTH);
 			MyStrcpy(my_msg.data, "Invalid password!\n");
                         my_msg.recipient=port_data.stdout_pid;
                         MsgSnd(&my_msg);

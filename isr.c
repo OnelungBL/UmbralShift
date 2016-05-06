@@ -106,7 +106,6 @@ void MsgSndISR(int msg_addr) {
   msg_q_id = incoming_msg_ptr->recipient;
   incoming_msg_ptr->OS_clock = OS_clock;
   incoming_msg_ptr->sender = running_pid;
-
 if (msg_q[msg_q_id].wait_q.len == 0) {
     MsgEnQ(incoming_msg_ptr, &msg_q[msg_q_id]);
   } else {
@@ -218,19 +217,21 @@ void ForkISR(int data, int size) { //does addr really go here?
                         cons_printf("Panic: no free DRAM space left!\n");
                         pcb[running_pid].TF_ptr->ecx = -1; //syscall uses ecx as return child PID
                 } else {
+
                         freed_pid = DeQ(&free_q);
                         pcb[running_pid].TF_ptr->ecx = freed_pid;
                         DRAM[DRAM_page].owner = freed_pid;
                         EnQ(freed_pid, &ready_q);
-                	MyBzero((char *)&msg_q[freed_pid], sizeof(msg_q_t)); //call MyBzero() to clear msg_q of freed_pid
+                	    MyBzero((char *)&msg_q[freed_pid], sizeof(msg_q_t)); //call MyBzero() to clear msg_q of freed_pid
                         MyBzero((char *)&pcb[freed_pid], sizeof(pcb_t));                        
-                       	MyBzero((char *)&proc_stack[freed_pid], PROC_STACK_SIZE); //call MyBzero() to clear pcb[freed_pid]
+                       	//MyBzero((char *)&proc_stack[freed_pid], PROC_STACK_SIZE); //call MyBzero() to clear pcb[freed_pid]
                         pcb[freed_pid].state = READY;
                         pcb[freed_pid].ppid = running_pid;
                         MyMemcpy( (char* )DRAM[DRAM_page].addr, (char*)data, size);
                         pcb[freed_pid].TF_ptr = (TF_t *) (DRAM[DRAM_page].addr + 0x1000 - sizeof(TF_t)); //find space at end of page for trap frame
-	                pcb[freed_pid].TF_ptr = (TF_t *)&proc_stack[freed_pid][PROC_STACK_SIZE];
-	                pcb[freed_pid].TF_ptr--; // (against last byte of stack, has space for a trapframe to build)
+	            
+				   // pcb[freed_pid].TF_ptr = (TF_t *)&proc_stack[freed_pid][PROC_STACK_SIZE];
+	                //pcb[freed_pid].TF_ptr--; // (against last byte of stack, has space for a trapframe to build)
 
 	                pcb[freed_pid].TF_ptr->eflags = EF_DEFAULT_VALUE|EF_INTR; // set INTR flag
 	                pcb[freed_pid].TF_ptr->cs = get_cs();
@@ -238,7 +239,7 @@ void ForkISR(int data, int size) { //does addr really go here?
 	                pcb[freed_pid].TF_ptr->es = get_es();
 	                pcb[freed_pid].TF_ptr->fs = get_fs();
 	                pcb[freed_pid].TF_ptr->gs = get_gs();
-	                pcb[freed_pid].TF_ptr->eip = DRAM[DRAM_page].addr + 0x80;
+					pcb[freed_pid].TF_ptr->eip = DRAM[DRAM_page].addr + 0x80;
                 }
         }
         return;

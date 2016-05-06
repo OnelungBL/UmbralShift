@@ -332,7 +332,7 @@ $(MY_DLI) :	$(OBJECTS) Makefile
 #  Dependencies.
 #### YQYQYQ-MARK-2 ####
 #
-#  Dependencies generated Thu Apr 28 19:42:19 PDT 2016 by (spede-mkmf $Revision: 1.2 $/1)
+#  Dependencies generated Thu May  5 21:20:56 PDT 2016 by (spede-mkmf $Revision: 1.2 $/1)
 #
 
 entry.o: entry.S \
@@ -360,7 +360,8 @@ FileService.o: FileService.c spede.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/machine/rs232.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/string.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/stdlib.h \
- typedef.h TF.h syscall.h toolfunc.h FileService.h
+ typedef.h TF.h syscall.h toolfunc.h FileService.h \
+ executables/take5.bin executables/say_hello.bin
 isr.o: isr.c spede.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/flames.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/sys/cdefs.h \
@@ -379,7 +380,7 @@ isr.o: isr.c spede.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/machine/rs232.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/string.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/stdlib.h \
- typedef.h TF.h isr.h toolfunc.h extern.h proc.h FileService.h \
+ typedef.h TF.h isr.h FileService.h toolfunc.h extern.h proc.h \
  syscall.h main.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/machine/pic.h
 main.o: main.c spede.h \
@@ -400,7 +401,7 @@ main.o: main.c spede.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/machine/rs232.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/string.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/stdlib.h \
- main.h isr.h typedef.h TF.h toolfunc.h proc.h FileService.h entry.h \
+ main.h isr.h typedef.h TF.h FileService.h toolfunc.h proc.h entry.h \
  /gaia/home/project/spede2/Target-i386/i686/gnu/i386-unknown-gnu/include/spede/machine/pic.h \
  extern.h
 proc.o: proc.c spede.h \

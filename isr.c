@@ -98,17 +98,12 @@ void SemPostISR(int sem_id) {
 
 
 void MsgSndISR(int msg_addr) {
-  int this_pid;
   msg_t *incoming_msg_ptr;
   msg_t *destination;
   int msg_q_id;
   int freed_pid;
-  this_pid = running_pid;
-  
-  set_cr3(pcb[running_pid].trans_table);
+
   incoming_msg_ptr = (msg_t *) msg_addr;
-  set_cr3(pcb[this_pid].trans_table);
-  
   msg_q_id = incoming_msg_ptr->recipient;
   incoming_msg_ptr->OS_clock = OS_clock;
   incoming_msg_ptr->sender = running_pid;
@@ -118,11 +113,10 @@ if (msg_q[msg_q_id].wait_q.len == 0) {
     freed_pid = DeQ(&msg_q[msg_q_id].wait_q);
     EnQ(freed_pid, &ready_q);
     pcb[freed_pid].state = READY;
-	
-	set_cr3(pcb[running_pid].trans_table);
+  set_cr3(pcb[freed_pid].trans_table);
     destination = (msg_t *)pcb[freed_pid].TF_ptr->eax;
     *destination = *incoming_msg_ptr;
-	set_cr3(pcb[this_pid].trans_table);
+
   }
 }
 
@@ -135,25 +129,21 @@ void MsgRcvISR(int msg_addr) {
   receiving_msg_ptr = (msg_t *)msg_addr;
   msg_q_id = running_pid;
   if (msg_q[msg_q_id].len > 0) {
-    set_cr3(pcb[running_pid].trans_table);
     queued_msg_ptr = MsgDeQ(&msg_q[msg_q_id]);
     *receiving_msg_ptr = *queued_msg_ptr;
-   set_cr3(pcb[this_pid].trans_table);
-	
   } else {  //no message   
     EnQ(running_pid, &msg_q[msg_q_id].wait_q);
     pcb[running_pid].state=WAIT;
+set_cr3(OS_trans_table);
     running_pid = -1;
   } 
 }
 
 void IRQ3ISR() {
         switch(inportb(COM2_IOBASE+IIR)) {
-                //case IIR_TXRDY, call TX() and break (send char to terminal)
                 case IIR_TXRDY:
                         TX();
                         break;
-                //case IIR_RXRDY, call RX() and break (get char from terminal)
                 case IIR_RXRDY:
                         RX();
                         break;
@@ -161,9 +151,7 @@ void IRQ3ISR() {
                         break;
         }
 
-        //if TXRDY in port data equals to 1
         if (port_data.TXRDY==1) {
-                //call TX() (check if can use it now to transmit out a char)
                 TX();
         }
 }
@@ -180,32 +168,24 @@ void TX() { // dequeue out_q to write to port
                 }
         }
         if (ch != 0) {
-                //use outportb to write ch to COM2_IOBASE+DATA
                 outportb(COM2_IOBASE+DATA, ch);
-                //clear TXRDY of port data
                 port_data.TXRDY=0;
         } else {
-                //set TXRDY of port data to 1
                 port_data.TXRDY=1;
         }
 }
 
 void RX() { // read char from port to queue in_q and echo_q
         char ch;
-        // use 127 to mask out msb (rest 7 bits in ASCII range)
         ch = inportb(COM2_IOBASE+DATA) & 0x7F;  // mask 0111 1111
-        //enqueue ch to RX buffer of port data
         EnQ(ch, &port_data.RX_buffer);
-        //SemPostISR RX_semaphore of port data
         SemPostISR(port_data.RX_semaphore);
 
         if (ch == '\r') {
-                //enqueue '\r' then '\n' to echo buffer of port data
                 EnQ('\r', &port_data.echo_buffer);
                 EnQ('\n', &port_data.echo_buffer);
         } else {
                 if (port_data.echo_mode == 1) {
-                        //enqueue ch to echo buffer of port data
                         EnQ(ch, &port_data.echo_buffer);
                 }
         }
@@ -230,7 +210,6 @@ void ForkISR(int data, int size) { //does addr really go here?
                 cons_printf("Panic: no free PID left!\n");
                 pcb[running_pid].TF_ptr->ecx = -1;
         } else {
-				//get five DRAM page indices
 				i=0;
 				for (DRAM_page=0; DRAM_page<DRAM_PAGE_COUNT; DRAM_page++) {
 					if (DRAM[DRAM_page].owner == -1) {
@@ -242,18 +221,14 @@ void ForkISR(int data, int size) { //does addr really go here?
 					cons_printf("Panic: no free DRAM space left!\n");
                     pcb[running_pid].TF_ptr->ecx = -1; //syscall uses ecx as return child PID
 				} else {
-						main_table = (int)&DRAM[five_idx[0]].addr;
-						code_data_subtable = (int)&DRAM[five_idx[1]].addr;
-						stack_subtable = (int)&DRAM[five_idx[2]].addr;
-						code_data_page = (int)&DRAM[five_idx[3]].addr;
-						stack_page = (int)&DRAM[five_idx[4]].addr;
-				
-				
+						main_table = DRAM[five_idx[0]].addr;
+						code_data_subtable = DRAM[five_idx[1]].addr;
+						stack_subtable = DRAM[five_idx[2]].addr;
+						code_data_page = DRAM[five_idx[3]].addr;
+						stack_page = DRAM[five_idx[4]].addr;
                         freed_pid = DeQ(&free_q);
                         pcb[running_pid].TF_ptr->ecx = freed_pid;
- //                       DRAM[DRAM_page].owner = freed_pid;
 						for (i=0; i<5; i++) {
-							MyBzero((char *) &DRAM[five_idx[i]], sizeof(DRAM_t));
 							DRAM[five_idx[i]].owner = freed_pid;
 						}
 						MyBzero((char *)&pcb[freed_pid], sizeof(pcb_t)); 
@@ -262,31 +237,35 @@ void ForkISR(int data, int size) { //does addr really go here?
                         pcb[freed_pid].state = READY;
                         pcb[freed_pid].ppid = running_pid;
 						pcb[freed_pid].trans_table = main_table;
-						pcb[freed_pid].TF_ptr = (TF_t *)0xbfffffc0; //3G-64
-						
-						MyMemcpy((char * )&code_data_page, (char *)data, size);
-						
-						TF_ptr = (TF_t *)(stack_page + 4096 - 64);
-
-	                pcb[freed_pid].TF_ptr->eflags = EF_DEFAULT_VALUE|EF_INTR; // set INTR flag
-	                pcb[freed_pid].TF_ptr->cs = get_cs();
-	                pcb[freed_pid].TF_ptr->ds = get_ds();
-	                pcb[freed_pid].TF_ptr->es = get_es();
-	                pcb[freed_pid].TF_ptr->fs = get_fs();
-	                pcb[freed_pid].TF_ptr->gs = get_gs();
-					pcb[freed_pid].TF_ptr->eip = (int)(TF_ptr + 0x80); //DRAM[DRAM_page].addr + 0x80;
-					
-					//translation table, 0x400 is 1kb
+						pcb[freed_pid].TF_ptr = (TF_t *)0xbfffffc0; //3G-64 //virtual?
+						MyMemcpy((char * )code_data_page, (char *)data, size);
+						TF_ptr = (TF_t *)(stack_page + 0x1000 - sizeof(TF_t)); //use "top" of stack_page to setup trap frame.  //real?
+						TF_ptr->eip = (0x80000000 + 0x80); //eip set to beginning of runtime space, plus header
+						TF_ptr->eflags = EF_DEFAULT_VALUE|EF_INTR; // set INTR flag
+						TF_ptr->cs = get_cs();
+						TF_ptr->ds = get_ds();
+						TF_ptr->es = get_es();
+						TF_ptr->fs = get_fs();
+						TF_ptr->gs = get_gs();
 					entry_ptr = (int *)main_table;
 					MyMemcpy((char *)entry_ptr, (char *)OS_trans_table, (sizeof(entry_ptr) * 4)); //each entry is 1kb, copy first four entries
-					
-					entry_ptr = (int *)main_table;
-					entry_ptr[512] = (code_data_subtable|0x30); //xor 1100000
-					entry_ptr[767] = (stack_subtable|0x30);
+					entry_ptr += 512;
+					*entry_ptr = code_data_subtable;
+					*entry_ptr |= 0x00000003; 
+
+					entry_ptr += 255; //767
+					*entry_ptr = stack_subtable;
+					*entry_ptr |= 0x00000003;
+
 					entry_ptr = (int *)code_data_subtable;
-					entry_ptr[0] = (code_data_page|0x30);
-					entry_ptr = (int *)stack_subtable;
-					entry_ptr[767] = (stack_page|0x30);
+					entry_ptr += 0;
+					*entry_ptr = code_data_page;
+					*entry_ptr |= 0x00000003;
+
+					entry_ptr = (int *)stack_subtable; //1023
+					entry_ptr  += 1023;
+					*entry_ptr = stack_page;
+					*entry_ptr |= 0x00000003;
                 }
         }
         return;
@@ -295,16 +274,20 @@ void ForkISR(int data, int size) { //does addr really go here?
 void WaitISR() {
         int i;
         int dram_page;
-        dram_page = -1;    
+		int page_count;
+		int tmp;
+        dram_page = -1;
+		page_count = 0;    
         for (i=0; i<DRAM_PAGE_COUNT; i++) {
                 if ((pcb[DRAM[i].owner].ppid == running_pid) && (pcb[DRAM[i].owner].state == ZOMBIE)) {
-                        dram_page=i;
+                        dram_page=i;  //at least on zombie child, returns the first zombie page found
                         break;
                 }
         }
         
         if (dram_page == -1) {
                 pcb[running_pid].state = FORKWAIT;
+				set_cr3(OS_trans_table);
                 running_pid = -1;
                 return;
         } else {
@@ -312,25 +295,29 @@ void WaitISR() {
                 pcb[running_pid].TF_ptr->eax = pcb[DRAM[dram_page].owner].TF_ptr->eax;
         }
 
+		tmp = DRAM[dram_page].owner;
         for (i=0; i<DRAM_PAGE_COUNT; i++) {
                 if (DRAM[i].owner == DRAM[dram_page].owner) {
-                        MyBzero((char *)&DRAM[i], sizeof(DRAM_t));
                         DRAM[i].owner=-1;
-                        EnQ(DRAM[dram_page].owner, &free_q);
                         MyBzero((char*)&pcb[DRAM[dram_page].owner], sizeof(pcb_t));
-                        break;
+                        page_count++;
+						if (page_count >= 5) break;
                 }
         }
+		EnQ(tmp, &free_q);
         return;
 }
+
 void ExitISR() {
         int i;
         int parent_pid;
         int dram_page;
-        dram_page = -1;
+
+        dram_page = 0;
         parent_pid = pcb[running_pid].ppid;
         if (pcb[parent_pid].state != FORKWAIT) {
                 pcb[running_pid].state = ZOMBIE;
+				set_cr3(OS_trans_table);
                 running_pid = -1;
         } else {
                 pcb[parent_pid].state = READY;
@@ -339,14 +326,14 @@ void ExitISR() {
                 pcb[parent_pid].TF_ptr->eax = pcb[running_pid].TF_ptr->eax;
                 for (i=0; i<DRAM_PAGE_COUNT; i++) {
                         if (DRAM[i].owner == running_pid) {
-                                dram_page = i;
-                                break;
+							DRAM[i].owner = -1;
+							dram_page++;
+							if (dram_page==5) break;
                         }
                 }
-                MyBzero((char*)DRAM[dram_page].addr, sizeof(int));
-                DRAM[dram_page].owner = -1;
                 MyBzero((char*)&pcb[running_pid], sizeof(pcb_t));
                 EnQ(running_pid, &free_q);
+				set_cr3(OS_trans_table);
                 running_pid = -1;
         }
         return;

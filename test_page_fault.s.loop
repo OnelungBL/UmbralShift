@@ -1,0 +1,37 @@
+.text
+.global _start
+
+_start:             # instructions begin
+   movl $1, %eax
+   int $49         # call sleep service, sleep for 1 second
+
+   movl $10, %ecx   # number of times to loop
+   movl $0x80000000, %ebx # use address of 2g
+
+lstart:
+   cmp $0, %ecx
+   je lend
+   decl %ecx
+   pushl %ecx 
+
+   movl %ecx, (%ebx)	#attempt to write to page
+   addl $0x1000, %ebx		#next iteration should write to next page
+
+   popl %ecx
+   jmp lstart
+lend:
+   movl %ebx, %eax
+   int  $58         # call exit interrupt
+
+.data
+msg:
+	.long 0
+	.long 5
+	.long 1
+	.ascii "Attempting to write to: \n\0"
+	.rept 76
+		.ascii "\0"
+	.endr
+	.long 0
+	.long 0
+	.long 0
